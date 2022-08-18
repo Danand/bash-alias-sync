@@ -1,5 +1,7 @@
 #!/bin/bash
 
+alias bashrc-reload='source ~/.bashrc'
+
 alias mongod-default='mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork'
 
 alias docker-prune='yes | docker system prune --force'

@@ -3,7 +3,7 @@
 function alias-pull() {
   cd ~/bash-alias-sync
   git pull --rebase --autostash
-  source ~/.bashrc
+  bashrc-reload
 }
 
 function alias-push() {
@@ -12,5 +12,5 @@ function alias-push() {
   git add -A
   git commit -m "Change aliases"
   git push
-  source ~/.bashrc
+  bashrc-reload
 }
