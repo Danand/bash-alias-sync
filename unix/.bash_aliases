@@ -3,6 +3,7 @@
 alias mongod-default='mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork'
 
 alias docker-prune='yes | docker system prune --force'
+alias docker-stop='docker rm $(docker ps -a -q)'
 alias docker-log='docker logs --follow --timestamps --details'
 alias docker-log-pipe='docker logs --follow --timestamps --details $(cat)'
 alias docker-log-select='docker logs --follow --timestamps --details $(docker container ls | fzf | cut -d " " -f 1)'
