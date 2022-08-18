@@ -7,8 +7,6 @@ function apply_aliases() {
   source ~/bash-alias-sync/$1/.bash_functions
 }
 
-apply_aliases "common"
-
 case "$OSTYPE" in
   darwin*)  apply_aliases "unix"; apply_aliases "macos" ;; 
   linux*)   apply_aliases "unix"; apply_aliases "linux";;
@@ -18,3 +16,5 @@ esac
 if cat /proc/version | grep -q microsoft ; then
   apply_aliases "wsl"
 fi
+
+apply_aliases "common"
