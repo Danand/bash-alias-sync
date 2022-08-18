@@ -18,13 +18,3 @@ esac
 if cat /proc/version | grep -q microsoft ; then
   apply_aliases "wsl"
 fi
-
-git_dir_def='--git-dir="~/bash-alias-sync/.git" \
---work-tree="~/bash-alias-sync"'
-
-alias alias-pull="git ${git_dir_def} pull --rebase"
-
-alias alias-push="git ${git_dir_def} add -A && \
-                  git ${git_dir_def} commit -m 'Sync aliases' && \
-                  git ${git_dir_def} pull --rebase && \
-                  git ${git_dir_def} push"
