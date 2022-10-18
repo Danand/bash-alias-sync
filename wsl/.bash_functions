@@ -13,3 +13,8 @@
 
     cmd.exe /c code "${win_path}" --new-window 2>/dev/null
   }
+
+  function explorerw() {
+    win_path=$(wslpath -w "$1")
+    explorer "${win_path}"
+  }
