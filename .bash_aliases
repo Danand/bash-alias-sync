@@ -5,6 +5,7 @@
 function apply_aliases() {
   source ~/bash-alias-sync/$1/.bash_aliases
   source ~/bash-alias-sync/$1/.bash_functions
+  source ~/bash-alias-sync/$1/.git_aliases
 }
 
 case "$OSTYPE" in

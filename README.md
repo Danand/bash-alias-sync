@@ -32,21 +32,27 @@ Bash Alias Synchronizer
 ├── README.md
 ├── common # Aliases for all following platforms.
 │   ├── .bash_aliases # Aliases without arguments.
+│   ├── .git_aliases # Aliases for Git.
 │   └── .bash_functions # Aliases with arguments.
 ├── linux # Aliases for Linux-only.
 │   ├── .bash_aliases
+│   ├── .git_aliases
 │   └── .bash_functions
 ├── macos # Aliases for MacOS-only.
 │   ├── .bash_aliases
+│   ├── .git_aliases
 │   └── .bash_functions
 ├── mingw # Aliases for MINGW (e.g. Git Bash for Windows).
 │   ├── .bash_aliases
+│   ├── .git_aliases
 │   └── .bash_functions
 ├── unix # Aliases for all UNIX-like systems.
 │   ├── .bash_aliases
+│   ├── .git_aliases
 │   └── .bash_functions
 └── wsl # Aliases for Windows Subsystem Linux.
     ├── .bash_aliases
+    ├── .git_aliases
     └── .bash_functions
 ```
 
@@ -55,14 +61,9 @@ Bash Alias Synchronizer
 2. Modify.
 3. Save file.
 4. Update aliases in current session.
-   - Linux/WSL/MacOS:
-     ```bash
-     . ~/.bashrc
-     ```
-   - MINGW64:
-     ```bash
-     . ~/.bash_profile
-     ```
+   ```bash
+   alias-update # Shortcut for updating aliases in current session.
+   ```
 
 # How to sync aliases
 1. Shortcut for push aliases to your repository:
@@ -72,4 +73,5 @@ Bash Alias Synchronizer
 2. Shortcut for pull aliases from your repository:
    ```bash
    alias-pull
+   alias-update # Update pulled aliases.
    ```

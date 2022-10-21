@@ -1,6 +1,6 @@
 #!/bin/bash
 
-alias bashrc-reload='source ~/.bashrc'
+alias alias-update='source ~/.bashrc'
 
 alias mongod-default='mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork'
 
