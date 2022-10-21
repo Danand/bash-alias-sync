@@ -1,16 +1,20 @@
 #!/bin/bash
 
 function alias-pull() {
+  current_dir=$(pwd)
   cd ~/bash-alias-sync
   git pull --rebase --autostash
-  bashrc-reload
+  alias-update
+  cd "${current_dir}"
 }
 
 function alias-push() {
+  current_dir=$(pwd)
   alias-pull
   cd ~/bash-alias-sync
   git add -A
   git commit -m "Change aliases"
   git push
-  bashrc-reload
+  alias-update
+  cd "${current_dir}"
 }
