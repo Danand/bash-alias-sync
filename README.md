@@ -57,7 +57,7 @@ Bash Alias Synchronizer
 ```
 
 # How to modify aliases
-1. Open corresponding `.bash_aliases` or `.bash_functions` with your favorite text editor.
+1. Open corresponding `.bash_aliases` or `.bash_functions` or `.git_aliases` with your favorite text editor.
 2. Modify.
 3. Save file.
 4. Update aliases in current session.
@@ -66,12 +66,11 @@ Bash Alias Synchronizer
    ```
 
 # How to sync aliases
-1. Shortcut for push aliases to your repository:
+1. Shortcut for pushing aliases to your repository:
    ```bash
    alias-push
    ```
-2. Shortcut for pull aliases from your repository:
+2. Shortcut for pulling aliases from your repository:
    ```bash
    alias-pull
-   alias-update # Update pulled aliases.
    ```
