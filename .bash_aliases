@@ -8,8 +8,10 @@ function apply_aliases() {
   source "$BASH_ALIAS_SYNC_REPO/$1/.git_aliases"
 }
 
+unalias -a
+
 case "$OSTYPE" in
-  darwin*)  apply_aliases "unix"; apply_aliases "macos" ;; 
+  darwin*)  apply_aliases "unix"; apply_aliases "macos" ;;
   linux*)   apply_aliases "unix"; apply_aliases "linux";;
   msys*)    apply_aliases "mingw" ;;
 esac
