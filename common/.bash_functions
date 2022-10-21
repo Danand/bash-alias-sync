@@ -2,7 +2,7 @@
 
 function alias-pull() {
   current_dir=$(pwd)
-  cd ~/bash-alias-sync
+  cd "$BASH_ALIAS_SYNC_REPO"
   git pull --rebase --autostash
   alias-update
   cd "${current_dir}"
@@ -10,7 +10,7 @@ function alias-pull() {
 
 function alias-push() {
   current_dir=$(pwd)
-  cd ~/bash-alias-sync
+  cd "$BASH_ALIAS_SYNC_REPO"
   git pull --rebase --autostash
   git add -A
   git commit -m "Change aliases"

@@ -2,12 +2,8 @@ Bash Alias Synchronizer
 ===
 
 # How to install
-1. Change directory to `$HOME`:
-   ```bash
-   cd ~
-   ```
-2. Fork this repository if you want to have your aliases, not mine.
-3. Clone repository:
+1. Fork this repository if you want to have your aliases, not mine.
+2. Clone repository:
    - via SSH:
      ```bash
      git clone git@github.com:<YOUR-USERNAME>/bash-alias-sync.git
@@ -16,19 +12,16 @@ Bash Alias Synchronizer
      ```bash
      git clone https://github.com/<YOUR-USERNAME>/bash-alias-sync.git
      ```
-4. Update aliases in current session:
-   - Linux/WSL/MacOS:
-     ```bash
-     . ~/.bashrc
-     ```
-   - MINGW64:
-     ```bash
-     . ~/.bash_profile
-     ```
+3. Install synchronization of aliases once:
+   ```bash
+   cd ./bash-alias-sync
+   chmod +x ./install.sh # Required for MacOS.
+   ./install.sh
+   ```
 # Folder structure
 ```bash
 .
-├── .bash_aliases # Don't touch this.
+├── .bash_aliases # Don't touch this if you are not sure.
 ├── README.md
 ├── common # Aliases for all following platforms.
 │   ├── .bash_aliases # Aliases without arguments.
@@ -42,7 +35,7 @@ Bash Alias Synchronizer
 │   ├── .bash_aliases
 │   ├── .git_aliases
 │   └── .bash_functions
-├── mingw # Aliases for MINGW (e.g. Git Bash for Windows).
+├── mingw # Aliases for MINGW (e.g. bundled with Git Bash for Windows).
 │   ├── .bash_aliases
 │   ├── .git_aliases
 │   └── .bash_functions
@@ -60,9 +53,9 @@ Bash Alias Synchronizer
 1. Open corresponding `.bash_aliases` or `.bash_functions` or `.git_aliases` with your favorite text editor.
 2. Modify.
 3. Save file.
-4. Update aliases in current session.
+4. Update aliases in current session:
    ```bash
-   alias-update # Shortcut for updating aliases in current session.
+   alias-update
    ```
 
 # How to sync aliases

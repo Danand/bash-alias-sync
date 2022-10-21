@@ -3,9 +3,9 @@
 # Contains aliases to add into `~/.bashrc` or `~/.bash_profile`.
 
 function apply_aliases() {
-  source ~/bash-alias-sync/$1/.bash_aliases
-  source ~/bash-alias-sync/$1/.bash_functions
-  source ~/bash-alias-sync/$1/.git_aliases
+  source "$BASH_ALIAS_SYNC_REPO/$1/.bash_aliases"
+  source "$BASH_ALIAS_SYNC_REPO/$1/.bash_functions"
+  source "$BASH_ALIAS_SYNC_REPO/$1/.git_aliases"
 }
 
 case "$OSTYPE" in
