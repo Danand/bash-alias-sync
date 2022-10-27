@@ -7,8 +7,8 @@ alias mongod-default='mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/
 alias docker-prune='yes | docker system prune --force'
 alias docker-kill='docker kill $(docker ps -q)'
 alias docker-rm='docker rm $(docker ps -a -q)'
-alias docker-log='docker logs --follow --timestamps --details'
-alias docker-log-pipe='docker logs --follow --timestamps --details $(cat)'
+alias docker-log='docker-compose logs --follow --timestamps'
+alias docker-log-pipe='docker-compose logs --follow --timestamps $(cat)'
 alias docker-log-select='docker logs --follow --timestamps --details $(docker container ls | tail -n +2 | fzf | cut -d " " -f 1)'
 
 alias git-stage='git add $(git diff --name-only | fzf)'
