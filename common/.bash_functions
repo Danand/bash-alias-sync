@@ -18,3 +18,10 @@ function alias-push() {
   alias-update
   cd "${current_dir}"
 }
+
+function pipe-temp() {
+  data=$(cat)
+  temp_file_path=$(mktemp)
+  echo "${data}" > "${temp_file_path}"
+  echo "${temp_file_path}"
+}
