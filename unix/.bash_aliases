@@ -14,5 +14,7 @@ alias docker-log-select='docker logs --follow --timestamps --details $(docker co
 alias git-stage='git add $(git diff --name-only | fzf)'
 alias git-unstage='git reset -- $(git diff --name-only --cached | fzf)'
 alias git-checkout='git checkout $(git branch --format="%(refname:short)" | sed "s/origin\///" | fzf)'
+alias git-rebase='git rebase --autostash $(git branch --format="%(refname:short)" | fzf)'
+alias git-merge='git merge $(git branch --format="%(refname:short)" | fzf) --no-ff'
 alias git-branch-rm='git branch -D $(git branch --format="%(refname:short)" | fzf)'
 alias git-cd-submodule='cd "$(git submodule | cut -d " " -f 3 | fzf)"'
