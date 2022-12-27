@@ -2,7 +2,7 @@
 
 git config --global alias.back 'reset --hard HEAD~1'
 git config --global alias.conflicts 'diff --name-only --diff-filter=U'
-git config --global alias.clear '!clear() { rm -f .git/index.lock && git reset --hard && git clean -fd && git submodule update --init --recursive; }; clear'
+git config --global alias.clear '!clear() { rm -f .git/index.lock && git reset --hard && git clean -fd && git submodule update; }; clear'
 git config --global alias.background-pull '!bgpull() { git fetch origin $1:$1 && git lfs fetch origin $1; }; bgpull'
 git config --global alias.background-pull-remote '!bgpull() { git fetch $1 $2:$2 && git lfs fetch $1 $2; }; bgpull'
 git config --global alias.unbranch '!unbranch() { current_branch=$(git branch --show-current) && git checkout $1 --force && git branch -D $current_branch && git fetch --prune && git pull; }; unbranch'
