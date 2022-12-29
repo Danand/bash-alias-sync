@@ -18,3 +18,8 @@
     win_path=$(wslpath -w "$1")
     explorer "${win_path}"
   }
+
+  function riderw() {
+    win_path=$(wslpath -w "$1")
+    rider64.exe "${win_path}" &
+  }
