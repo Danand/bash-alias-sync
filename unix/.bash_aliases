@@ -10,6 +10,7 @@ alias docker-rm='docker rm $(docker ps -a -q)'
 alias docker-log='docker-compose logs --follow --timestamps'
 alias docker-log-pipe='docker-compose logs --follow --timestamps $(cat)'
 alias docker-log-select='docker logs --follow --timestamps --details $(docker container ls | tail -n +2 | fzf | cut -d " " -f 1)'
+alias docker-ignore-ls='rsync -avn . /dev/shm --exclude=.git --include-from=.dockerignore'
 
 alias git-stage='git add $(git diff --name-only | fzf)'
 alias git-unstage='git reset -- $(git diff --name-only --cached | fzf)'

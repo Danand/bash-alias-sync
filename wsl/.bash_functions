@@ -37,3 +37,13 @@
     win_path=$(wslpath -w "$1")
     rider64.exe "${win_path}" &
   }
+
+  function ssh-keygenw() {
+    ssh-keygen -q -t rsa -N '' -f "$HOME/.ssh/$1" <<<y > /dev/null
+
+    user_profile_win="$(wslvar USERPROFILE)"
+    user_profile_wsl="$(wslpath "${user_profile_win}")"
+
+    cp -f "$HOME/.ssh/$1" "${user_profile_wsl}/.ssh/$1"
+    cp -f "$HOME/.ssh/$1.pub" "${user_profile_wsl}/.ssh/$1.pub"
+  }
