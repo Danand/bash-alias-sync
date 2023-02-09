@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export RG_SLASH='[/\\]+'
+export RG_SLASH='[/\\]{1}'
 
 alias venv-create='DISPLAY= python3 -m venv .venv'
 alias venv-activate='source ./venv/bin/activate'
