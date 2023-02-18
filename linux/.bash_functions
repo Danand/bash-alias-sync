@@ -9,3 +9,8 @@ function find-fzf() {
   results="$(find "$@")"
   echo "${results}" | sort --uniq | fzf
 }
+
+function code-create() {
+  touch "$1"
+  code "$1"
+}
