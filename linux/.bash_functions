@@ -10,7 +10,17 @@ function find-fzf() {
   echo "${results}" | sort --uniq | fzf
 }
 
-function code-create() {
+function code-new() {
   touch "$1"
-  code "$1"
+  code "$1" --reuse-window
+}
+
+function docker-run-it() {
+  selected_image_line="$(docker image ls | tail -n +2 | fzf | tr -s ' ')"
+
+  image_name="$(echo $selected_image_line | cut -d ' ' -f 1)"
+  image_name+=":"
+  image_name+="$(echo $selected_image_line | cut -d ' ' -f 2)"
+
+  docker run -it "${image_name}" $@
 }

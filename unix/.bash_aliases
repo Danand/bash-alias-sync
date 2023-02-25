@@ -1,6 +1,7 @@
 #!/bin/bash
 
 alias alias-update='source ~/.bashrc'
+alias alias-edit="code \"$BASH_ALIAS_SYNC_REPO\" --new-window"
 
 alias mongod-default='mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork'
 

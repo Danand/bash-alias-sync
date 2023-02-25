@@ -2,6 +2,8 @@
 
 export RG_SLASH='[/\\]{1}'
 
+alias alias-edit="code \"$BASH_ALIAS_SYNC_REPO\" --new-window"
+
 alias venv-create='DISPLAY= python3 -m venv .venv'
 alias venv-activate='source ./venv/bin/activate'
 
