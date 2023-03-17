@@ -8,6 +8,6 @@ git config --global alias.background-pull '!bgpull() { git fetch origin $1:$1 &&
 git config --global alias.background-pull-remote '!bgpull() { git fetch $1 $2:$2 && git lfs fetch $1 $2; }; bgpull'
 git config --global alias.unbranch '!unbranch() { current_branch=$(git branch --show-current) && git checkout $1 --force && git branch -D $current_branch && git fetch --prune && git pull; }; unbranch'
 git config --global alias.tags '!tags() { git log --tags --simplify-by-decoration --pretty="format:%ci %d" | head -n $1; }; tags'
-git config --global alias.push-exact '!push() { git push origin $(git branch --show-current) ; }; push'
-git config --global alias.fetch-all '!fetch() { git fetch && git submodule foreach git fetch && git fetch --prune && git submodule foreach git fetch --prune }; fetch'
+git config --global alias.push-exact '!push() { git push origin $(git branch --show-current); }; push'
+git config --global alias.fetch-all '!fetch() { git fetch && git submodule foreach git fetch && git fetch --prune && git submodule foreach git fetch --prune; }; fetch'
 git config --global alias.branch-current 'branch --show-current'
