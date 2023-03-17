@@ -28,6 +28,11 @@ function codewrg() {
   done
 }
 
+function code-new() {
+  touch "$1"
+  code "$1" --reuse-window
+}
+
 function explorerw() {
   win_path=$(wslpath -w "$1")
   explorer "${win_path}"
