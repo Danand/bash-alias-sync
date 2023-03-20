@@ -21,9 +21,9 @@ function alias-push() {
 
 function non-existent-command-trap() {
   if [ "$?" == "127" ]; then
-  echo "Let's pretend we didn't see that..."
-  history_last_line_number="$(history | tail -n 1 | grep -Po "^\s*(\K\d*)\s*")"
-  history -d "${history_last_line_number}"
+    echo "Let's pretend we did not see that..."
+    history_last_line_number="$(history | tail -n 1 | grep -Po "^\s*(\K\d*)\s*")"
+    history -d "${history_last_line_number}"
   fi
 }
 
