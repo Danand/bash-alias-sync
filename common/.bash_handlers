@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Trims misspelled command from history:
+
+function non-existent-command-trap() {
+  if [ "$?" == "127" ]; then
+    echo "Let's pretend we did not see that..."
+    history_last_line_number="$(builtin history | tail -n 1 | grep -Po "^\s*(\K\d*)\s*")"
+    builtin history -d "${history_last_line_number}"
+    builtin history -r
+  fi
+}
+
+trap non-existent-command-trap ERR
+
+# Set up history synchronization between sessions:
+
+HISTSIZE=9000
+HISTFILESIZE=$HISTSIZE
+HISTCONTROL=ignorespace:ignoredups
+
+bash_history_sync() {
+    builtin history -a
+    HISTFILESIZE=$HISTSIZE
+    builtin history -c
+    builtin history -r
+}
+
+history() {
+    bash_history_sync
+    builtin history "$@"
+}
+
+PROMPT_COMMAND=bash_history_sync

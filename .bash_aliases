@@ -11,6 +11,7 @@ function export_functions() {
 function apply_aliases() {
   source "$BASH_ALIAS_SYNC_REPO/$1/.bash_aliases"
   source "$BASH_ALIAS_SYNC_REPO/$1/.bash_functions"
+  source "$BASH_ALIAS_SYNC_REPO/$1/.bash_handlers"
   source "$BASH_ALIAS_SYNC_REPO/$1/.git_aliases"
   export_functions
 }
