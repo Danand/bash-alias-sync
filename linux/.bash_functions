@@ -28,3 +28,7 @@ function docker-run-it() {
 function openvpn-connect() {
   sudo openvpn --config "/etc/openvpn/client.conf"
 }
+
+function doctl-ssh() {
+  doctl compute ssh $(doctl compute droplet list --format=ID,Name,PublicIPv4,Region,Image --no-header | fzf | cut -d $'\t' -f 1)
+}
