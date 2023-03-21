@@ -22,7 +22,7 @@ function docker-run-it() {
   image_name+=":"
   image_name+="$(echo $selected_image_line | cut -d ' ' -f 2)"
 
-  docker run -it "${image_name}" $@
+  docker run -it "${image_name}" "$@"
 }
 
 function openvpn-connect() {
@@ -30,5 +30,24 @@ function openvpn-connect() {
 }
 
 function doctl-ssh() {
-  doctl compute ssh $(doctl compute droplet list --format=ID,Name,PublicIPv4,Region,Image --no-header | fzf | cut -d $'\t' -f 1)
+  doctl compute ssh "$(doctl compute droplet list --format=ID,Name,PublicIPv4,Region,Image --no-header | fzf | cut -d $'\t' -f 1)"
+}
+
+function detect-package-manager() {
+  declare -A dist_release
+
+  dist_release["/etc/redhat-release"]="yum"
+  dist_release["/etc/arch-release"]="pacman"
+  dist_release["/etc/gentoo-release"]="emerge"
+  dist_release["/etc/SuSE-release"]="zypp"
+  dist_release["/etc/debian_version"]="apt"
+  dist_release["/etc/alpine-release"]="apk"
+
+  for key in "${!dist_release[@]}"; do
+    if [ -f "${key}" ]; then
+      echo "${dist_release["${key}"]}"
+    else
+      1>&2 echo "Cannot detect package manager on system $(uname -o) $(uname -r)"
+    fi
+  done
 }
