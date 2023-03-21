@@ -30,7 +30,13 @@ function openvpn-connect() {
 }
 
 function doctl-ssh() {
-  doctl compute ssh "$(doctl compute droplet list --format=ID,Name,PublicIPv4,Region,Image --no-header | fzf | cut -d $'\t' -f 1)"
+  doctl compute ssh \
+  "$(doctl compute droplet list \
+    --format="ID,Name,PublicIPv4,Region,Image" \
+    --no-header | \
+    tr -s " " | \
+    fzf | \
+    cut -d " " -f 1)"
 }
 
 function detect-package-manager() {
