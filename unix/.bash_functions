@@ -22,6 +22,51 @@ function git-history-fzf() {
   fi
 }
 
+function git-checkout-file-fzf() {
+  pattern="$1"
+
+  if [ -z "${pattern}" ]; then
+    branches="$(git branch -r --format="%(refname:short)")"
+  else
+    branches="$(git branch -r --format="%(refname:short)" | grep "${pattern}")"
+  fi
+
+  if [ -z "${branches}" ]; then
+    return 0
+  fi
+
+  selected_branch="$(echo "${branches}" | fzf)"
+
+  if [ -z "${branches}" ]; then
+    return 0
+  fi
+
+  if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
+    return 0
+  fi
+
+  selected_dir="."
+  selected_file=""
+
+  while [ -z "${selected_file}" ]; do
+    selected_item="$(git ls-tree --format="%(objecttype)%x09%(path)" "${selected_branch}" "${selected_dir}/" | fzf)"
+
+    selected_item_type=$(echo "${selected_item}" | cut -f 1)
+    selected_item_name=$(echo "${selected_item}" | cut -f 2)
+
+    if [ "${selected_item_type}" == "blob" ]; then
+      selected_file="${selected_item_name}"
+    elif [ "${selected_item_type}" == "tree" ]; then
+      selected_dir="${selected_item_name}"
+    else
+      1>&2 echo "Item type \`${selected_item_type}\` is currently not supported"
+      return 1
+    fi
+  done
+
+  git checkout "${selected_branch}" -- "${selected_file}"
+}
+
 function docker-logs() {
   docker-compose "$@" logs --follow --timestamps
 }
