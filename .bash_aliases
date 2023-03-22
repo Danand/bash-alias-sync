@@ -24,7 +24,7 @@ case "$OSTYPE" in
   msys*)    apply_aliases "mingw" ;;
 esac
 
-if cat /proc/version | grep -q microsoft ; then
+if grep -q "microsoft" "/proc/version" ; then
   apply_aliases "wsl"
 fi
 
