@@ -18,3 +18,12 @@ function alias-push() {
   alias-update
   cd "${current_dir}"
 }
+
+function alias-reset() {
+  current_dir=$(pwd)
+  cd "$BASH_ALIAS_SYNC_REPO"
+  git reset --hard
+  git clean -fd
+  alias-update
+  cd "${current_dir}"
+}
