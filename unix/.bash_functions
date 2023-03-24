@@ -22,6 +22,10 @@ function git-history-fzf() {
   fi
 }
 
+function git-submodule-enter-fzf() {
+  cd "$("$(which git)" submodule --quiet foreach --recursive pwd | xargs realpath --relative-to="${PWD}" | fzf)" || return 2
+}
+
 function git-checkout-file-fzf() {
   pattern="$1"
 
