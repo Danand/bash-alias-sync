@@ -26,7 +26,33 @@ function docker-run-it() {
 }
 
 function openvpn-connect() {
-  sudo openvpn --config "/etc/openvpn/client.conf"
+  sudo service openvpn start
+
+  sleep 5
+
+  echo "Connected"
+  echo
+
+  echo "Current IP info:"
+
+  # Obtain token at https://ipinfo.io/
+  curl "https://ipinfo.io/?token=${IPINFO_TOKEN}"
+  echo
+}
+
+function openvpn-disconnect() {
+  sudo service openvpn stop
+
+  sleep 5
+
+  echo "Disconnected"
+  echo
+
+  echo "Current IP info:"
+
+  # Obtain token at https://ipinfo.io/
+  curl "https://ipinfo.io/?token=${IPINFO_TOKEN}"
+  echo
 }
 
 function doctl-ssh() {
