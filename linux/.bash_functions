@@ -60,9 +60,31 @@ function doctl-ssh() {
   "$(doctl compute droplet list \
     --format="ID,Name,PublicIPv4,Region,Image" \
     --no-header | \
-    tr -s " " | \
     fzf | \
+    tr -s " " | \
     cut -d " " -f 1)"
+}
+
+function doctl-update-hosts() {
+  droplet_ips="$(doctl compute droplet list \
+    --format="PublicIPv4,Name" \
+    --no-header | \
+    tr -s " ")"
+
+  clear_from="$(sudo grep -n "DigitalOcean.*begin" /etc/hosts | cut -d ":" -f 1)"
+  clear_to="$(sudo grep -n "DigitalOcean.*end" /etc/hosts | cut -d ":" -f 1)"
+
+  if [ -n "${clear_from}" ] && [ -n "${clear_to}" ]; then
+    sudo sed -i "${clear_from},${clear_to}d" /etc/hosts
+  fi
+
+  sudo bash -c "echo \"# ===== DigitalOcean Droplets (begin) =====\" >> /etc/hosts"
+
+  for droplet_ip in "${droplet_ips}"; do
+    sudo bash -c "echo \"${droplet}\" >> /etc/hosts"
+  done
+
+  sudo bash -c "echo \"# ===== DigitalOcean Droplets (end) =====\" >> /etc/hosts"
 }
 
 function detect-package-manager() {
