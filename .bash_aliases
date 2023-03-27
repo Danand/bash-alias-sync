@@ -9,9 +9,16 @@ function export_functions() {
 }
 
 function apply_aliases() {
+  # shellcheck source=/dev/null
   source "$BASH_ALIAS_SYNC_REPO/$1/.bash_aliases"
+
+  # shellcheck source=/dev/null
   source "$BASH_ALIAS_SYNC_REPO/$1/.bash_functions"
+
+  # shellcheck source=/dev/null
   source "$BASH_ALIAS_SYNC_REPO/$1/.bash_handlers"
+
+  # shellcheck source=/dev/null
   source "$BASH_ALIAS_SYNC_REPO/$1/.git_aliases"
 
   export_functions
@@ -19,14 +26,15 @@ function apply_aliases() {
 
 unalias -a
 
+apply_aliases "common"
+apply_aliases "unix"
+
 case "$OSTYPE" in
-  darwin*)  apply_aliases "unix"; apply_aliases "macos" ;;
-  linux*)   apply_aliases "unix"; apply_aliases "linux";;
+  darwin*)  apply_aliases "macos" ;;
+  linux*)   apply_aliases "linux";;
   msys*)    apply_aliases "mingw" ;;
 esac
 
-if grep -q "microsoft" "/proc/version" ; then
+if grep -q "microsoft" "/proc/version" && ! test -f ".dockerenv"; then
   apply_aliases "wsl"
 fi
-
-apply_aliases "common"

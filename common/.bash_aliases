@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# shellcheck disable=SC2139
+
 export RG_SLASH='[/\\]{1}'
 
 alias alias-edit="code \"${BASH_ALIAS_SYNC_REPO}\" --new-window"

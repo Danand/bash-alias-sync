@@ -1,1 +1,5 @@
 #!/bin/bash
+
+$(which git) config --global core.editor "codew"
+$(which git) config --global diff.tool "riderw"
+$(which git) config --global merge.tool "riderw"

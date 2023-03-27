@@ -18,9 +18,9 @@ function code-new() {
 function docker-run-it() {
   selected_image_line="$(docker image ls | tail -n +2 | fzf | tr -s ' ')"
 
-  image_name="$(echo $selected_image_line | cut -d ' ' -f 1)"
+  image_name="$(echo "${selected_image_line}" | cut -d ' ' -f 1)"
   image_name+=":"
-  image_name+="$(echo $selected_image_line | cut -d ' ' -f 2)"
+  image_name+="$(echo "${selected_image_line}" | cut -d ' ' -f 2)"
 
   docker run -it "${image_name}" "$@"
 }
@@ -100,8 +100,11 @@ function detect-package-manager() {
   for key in "${!dist_release[@]}"; do
     if [ -f "${key}" ]; then
       echo "${dist_release["${key}"]}"
-    else
-      1>&2 echo "Cannot detect package manager on system $(uname -o) $(uname -r)"
+      return 0
     fi
   done
+
+  1>&2 echo "Cannot detect package manager on system $(uname -o) $(uname -r)"
+
+  return 2
 }

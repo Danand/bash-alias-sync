@@ -22,8 +22,30 @@ function git-history-fzf() {
   fi
 }
 
-function git-submodule-enter-fzf() {
+function git-cd-submodule-fzf() {
   cd "$("$(which git)" submodule --quiet foreach --recursive pwd | xargs realpath --relative-to="${PWD}" | fzf)" || return 2
+}
+
+function git-merge-fzf() {
+  pattern="$1"
+
+  if [ -z "${pattern}" ]; then
+    branches="$(git branch -r --format="%(refname:short)")"
+  else
+    branches="$(git branch -r --format="%(refname:short)" | grep "${pattern}")"
+  fi
+
+  if [ -z "${branches}" ]; then
+    return 0
+  fi
+
+  selected_branch="$(echo "${branches}" | fzf)"
+
+  if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
+    return 0
+  fi
+
+  git merge --no-ff "${selected_branch}"
 }
 
 function git-checkout-file-fzf() {
@@ -40,10 +62,6 @@ function git-checkout-file-fzf() {
   fi
 
   selected_branch="$(echo "${branches}" | fzf)"
-
-  if [ -z "${branches}" ]; then
-    return 0
-  fi
 
   if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
     return 0
@@ -80,15 +98,15 @@ function docker-log() {
 }
 
 function docker-log-pipe() {
-  docker-compose "$@" logs --follow --timestamps $(cat)
+  docker-compose "$@" logs --follow --timestamps "$(cat)"
 }
 
 function docker-run-it() {
   selected_image_line="$(docker image ls | tail -n +2 | fzf | tr -s ' ')"
 
-  image_name="$(echo $selected_image_line | cut -d ' ' -f 1)"
+  image_name="$(echo "${selected_image_line}" | cut -d ' ' -f 1)"
   image_name+=":"
-  image_name+="$(echo $selected_image_line | cut -d ' ' -f 2)"
+  image_name+="$(echo "${selected_image_line}" | cut -d ' ' -f 2)"
 
-  docker run -it "${image_name}" $@
+  docker run -it "${image_name}" "$@"
 }
