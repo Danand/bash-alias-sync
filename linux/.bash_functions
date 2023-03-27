@@ -80,8 +80,8 @@ function doctl-update-hosts() {
 
   sudo bash -c "echo \"# ===== DigitalOcean Droplets (begin) =====\" >> /etc/hosts"
 
-  for droplet_ip in "${droplet_ips}"; do
-    sudo bash -c "echo \"${droplet}\" >> /etc/hosts"
+  for droplet_ip in ${droplet_ips}; do
+    sudo bash -c "echo \"${droplet_ip}\" >> /etc/hosts"
   done
 
   sudo bash -c "echo \"# ===== DigitalOcean Droplets (end) =====\" >> /etc/hosts"
