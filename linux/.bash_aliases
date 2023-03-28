@@ -1,3 +1,4 @@
 #!/bin/bash
 
-alias clip='xclip -selection clipboard'
+alias clip='xclip -r'
+alias paste='xclip -o'

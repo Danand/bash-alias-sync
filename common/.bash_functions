@@ -1,7 +1,11 @@
 #!/bin/bash
 
 function alias-update() {
-  source ~/.bashrc
+  if [ -f "${HOME}/.bash_profile" ]; then
+    source "${HOME}/.bash_profile"
+  else
+    source "${HOME}/.bashrc"
+  fi
 }
 
 function alias-pull() {

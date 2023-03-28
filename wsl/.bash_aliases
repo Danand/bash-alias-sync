@@ -1,6 +1,7 @@
 #!/bin/bash
 
 alias clip='clip.exe'
+alias paste='powershell.exe -command "Get-Clipboard"'
 alias explorer='explorer.exe'
 alias cmd='cmd.exe'
 alias git='git.exe'

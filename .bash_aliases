@@ -10,16 +10,16 @@ function export_functions() {
 
 function apply_aliases() {
   # shellcheck source=/dev/null
-  source "$BASH_ALIAS_SYNC_REPO/$1/.bash_aliases"
+  source "${BASH_ALIAS_SYNC_REPO}/$1/.bash_aliases"
 
   # shellcheck source=/dev/null
-  source "$BASH_ALIAS_SYNC_REPO/$1/.bash_functions"
+  source "${BASH_ALIAS_SYNC_REPO}/$1/.bash_functions"
 
   # shellcheck source=/dev/null
-  source "$BASH_ALIAS_SYNC_REPO/$1/.bash_handlers"
+  source "${BASH_ALIAS_SYNC_REPO}/$1/.bash_handlers"
 
   # shellcheck source=/dev/null
-  source "$BASH_ALIAS_SYNC_REPO/$1/.git_aliases"
+  source "${BASH_ALIAS_SYNC_REPO}/$1/.git_aliases"
 
   export_functions
 }
@@ -29,12 +29,16 @@ unalias -a
 apply_aliases "common"
 apply_aliases "unix"
 
-case "$OSTYPE" in
-  darwin*)  apply_aliases "macos" ;;
-  linux*)   apply_aliases "linux";;
-  msys*)    apply_aliases "mingw" ;;
-esac
+if [[ "${OSTYPE}" == "darwin"* ]]; then
+  apply_aliases "macos"
+elif [[ "${OSTYPE}" == "linux"* ]]; then
+  apply_aliases "linux"
+fi
 
-if grep -q "microsoft" "/proc/version" && ! test -f ".dockerenv"; then
+if [[ "${OSTYPE}" == "msys"* ]]; then
+  apply_aliases "mingw"
+fi
+
+if grep -q "microsoft" "/proc/version" && test ! -f ".dockerenv"; then
   apply_aliases "wsl"
 fi
