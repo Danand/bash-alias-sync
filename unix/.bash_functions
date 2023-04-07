@@ -110,3 +110,8 @@ function docker-run-it() {
 
   docker run -it "${image_name}" "$@"
 }
+
+function ffmpeg-speedup() {
+  speed=$(bc -l <<< "scale=2; 1/$2")
+  ffmpeg -i "$1" -filter:v "setpts=${speed}*PTS" "speed-up-$1"
+}
