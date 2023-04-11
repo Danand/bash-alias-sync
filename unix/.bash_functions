@@ -1,5 +1,19 @@
 #!/bin/bash
 
+function git-branch-first-commit() {
+  branch="$(git branch --show-current)"
+
+  last_commit="HEAD"
+
+  for commit in $(git log "${branch}" --oneline --format=%H); do
+    if [ "$(git branch --contains "${commit}" | wc -l)" -gt 1 ]; then
+      echo "${last_commit}"
+      return 0
+    fi
+    last_commit="${commit}"
+  done
+}
+
 function rg-fzf() {
   results="$(rg "$1" --files-without-match)"
   echo "${results}" | sort --uniq | fzf
@@ -46,6 +60,55 @@ function git-merge-fzf() {
   fi
 
   git merge --no-ff "${selected_branch}"
+}
+
+function git-rebase-current-branch-fzf() {
+  pattern="$1"
+
+  if [ -z "${pattern}" ]; then
+    branches="$(git branch --format="%(refname:short)")"
+  else
+    branches="$(git branch --format="%(refname:short)" | grep "${pattern}")"
+  fi
+
+  if [ -z "${branches}" ]; then
+    return 0
+  fi
+
+  selected_branch="$(echo "${branches}" | fzf)"
+
+  if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
+    return 0
+  fi
+
+  ours_branch="$(git branch --show-current)"
+  ours_first_commit=$(git-branch-first-commit)
+
+  git rebase -i --autostash --onto "${selected_branch}" "${ours_first_commit}^" "HEAD"
+  git update-ref "refs/heads/${ours_branch}" HEAD
+  git checkout "${ours_branch}"
+}
+
+function git-checkout-fzf() {
+  pattern="$1"
+
+  if [ -z "${pattern}" ]; then
+    branches="$(git branch --format="%(refname:short)")"
+  else
+    branches="$(git branch --format="%(refname:short)" | grep "${pattern}")"
+  fi
+
+  if [ -z "${branches}" ]; then
+    return 0
+  fi
+
+  selected_branch="$(echo "${branches}" | fzf)"
+
+  if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
+    return 0
+  fi
+
+  git checkout "${@:2}" "${selected_branch}"
 }
 
 function git-checkout-file-fzf() {
