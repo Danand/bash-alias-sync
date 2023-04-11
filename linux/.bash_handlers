@@ -6,6 +6,7 @@ if [ "$(detect-package-manager)" == "apt" ]; then
   __try_install_via_apt xclip
   __try_install_via_apt ripgrep
   __try_install_via_apt fzf
+  __try_install_via_apt ffmpeg
 
   unset -f __try_install_via_apt
 fi
