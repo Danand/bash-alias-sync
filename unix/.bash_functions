@@ -176,5 +176,5 @@ function docker-run-it() {
 
 function ffmpeg-speedup() {
   speed=$(bc -l <<< "scale=2; 1/$2")
-  ffmpeg -i "$1" -filter:v "setpts=${speed}*PTS" "speed-up-$1"
+  ffmpeg -i "$1" -filter:v "setpts=${speed}*PTS" "${@:3}" "speed-up-$1"
 }
