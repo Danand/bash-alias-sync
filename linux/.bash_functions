@@ -55,6 +55,10 @@ function openvpn-disconnect() {
   echo
 }
 
+function ipinfo() {
+  curl "https://ipinfo.io/?token=${IPINFO_TOKEN}"
+}
+
 function doctl-ssh() {
   doctl compute ssh \
   "$(doctl compute droplet list \
