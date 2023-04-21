@@ -13,3 +13,4 @@ git config --global alias.tags '!tags() { git log --tags --simplify-by-decoratio
 git config --global alias.push-exact '!push() { git push origin $(git branch --show-current); }; push'
 git config --global alias.fetch-all '!fetch() { git remote prune origin && git fetch && git submodule foreach git fetch && git fetch --prune && git submodule foreach git fetch --prune; }; fetch'
 git config --global alias.branch-current 'branch --show-current'
+git config --global alias.branch-set-upstream '!set_upstream() { git branch --set-upstream-to origin/$(git branch --show current); }; set_upstream'
