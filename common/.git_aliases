@@ -4,7 +4,6 @@
 
 git config --global alias.back 'reset --hard HEAD~1'
 git config --global alias.conflicts 'diff --name-only --diff-filter=U'
-git config --global alias.clear '!clear() { rm -f .git/index.lock && git reset --hard && git clean -fd && git submodule update; }; clear'
 git config --global alias.checkout-force '!checkout() { rm -f .git/index.lock && git checkout --force $1 && git submodule update; }; checkout'
 git config --global alias.background-pull '!bgpull() { git fetch origin $1:$1 && git lfs fetch origin $1; }; bgpull'
 git config --global alias.background-pull-remote '!bgpull() { git fetch $1 $2:$2 && git lfs fetch $1 $2; }; bgpull'
@@ -14,3 +13,5 @@ git config --global alias.push-exact '!push() { git push origin $(git branch --s
 git config --global alias.fetch-all '!fetch() { git remote prune origin && git fetch && git submodule foreach git fetch && git fetch --prune && git submodule foreach git fetch --prune; }; fetch'
 git config --global alias.branch-current 'branch --show-current'
 git config --global alias.branch-set-upstream '!set_upstream() { git branch --set-upstream-to origin/$(git branch --show current); }; set_upstream'
+git config --global alias.reset-hard '!reset() { rm -f .git/index.lock && git reset --hard && git clean -fd && git submodule update; }; reset'
+git config --global alias.reset-to-remote '!reset() { rm -f .git/index.lock && git reset --hard origin/$(git branch --show current) && git clean -fd && git submodule update; }; reset'
