@@ -156,11 +156,7 @@ function docker-logs() {
   docker-compose "$@" logs --follow --timestamps
 }
 
-function docker-log() {
-  docker-compose "$@" logs --follow --timestamps
-}
-
-function docker-log-pipe() {
+function docker-logs-pipe() {
   docker-compose "$@" logs --follow --timestamps "$(cat)"
 }
 
