@@ -21,6 +21,9 @@ function apply_aliases() {
   # shellcheck source=/dev/null
   source "${BASH_ALIAS_SYNC_REPO}/$1/.git_aliases"
 
+  # shellcheck source=/dev/null
+  source "${BASH_ALIAS_SYNC_REPO}/$1/.bash_constants"
+
   export_functions
 }
 

@@ -2,8 +2,6 @@
 
 # shellcheck disable=SC2139
 
-export RG_SLASH='[/\\]{1}'
-
 alias alias-edit="code \"${BASH_ALIAS_SYNC_REPO}\" --new-window"
 
 alias git-fetch='git fetch --all && git submodule foreach git fetch --all'

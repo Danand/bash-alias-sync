@@ -1,0 +1,4 @@
+#!/bin/bash
+
+export RG_SLASH="[/\\]{1}"
+export RG_QUOTE="[\"]{1}"

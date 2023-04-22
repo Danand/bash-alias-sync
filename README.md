@@ -26,26 +26,39 @@ Bash Alias Synchronizer
 ├── common # Aliases for all following platforms.
 │   ├── .bash_aliases # Aliases without arguments.
 │   ├── .git_aliases # Aliases for Git.
+│   ├── .bash_constants # Exported constants.
+│   ├── .bash_handlers # Input handlers.
+│   ├── .git_aliases # Aliases for Git.
 │   └── .bash_functions # Aliases with arguments.
 ├── linux # Aliases for Linux-only.
 │   ├── .bash_aliases
 │   ├── .git_aliases
+│   ├── .bash_constants
+│   ├── .bash_handlers
 │   └── .bash_functions
 ├── macos # Aliases for MacOS-only.
 │   ├── .bash_aliases
 │   ├── .git_aliases
+│   ├── .bash_constants
+│   ├── .bash_handlers
 │   └── .bash_functions
 ├── mingw # Aliases for MINGW (e.g. bundled with Git Bash for Windows).
 │   ├── .bash_aliases
 │   ├── .git_aliases
+│   ├── .bash_constants
+│   ├── .bash_handlers
 │   └── .bash_functions
 ├── unix # Aliases for all UNIX-like systems.
 │   ├── .bash_aliases
 │   ├── .git_aliases
+│   ├── .bash_constants
+│   ├── .bash_handlers
 │   └── .bash_functions
 └── wsl # Aliases for Windows Subsystem Linux.
     ├── .bash_aliases
     ├── .git_aliases
+    ├── .bash_constants
+    ├── .bash_handlers
     └── .bash_functions
 ```
 
