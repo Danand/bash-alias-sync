@@ -6,7 +6,7 @@ alias docker-prune='yes | docker system prune -a --force'
 alias docker-kill='docker kill $(docker ps -q)'
 alias docker-rm='docker rm $(docker ps -a -q)'
 alias docker-rmi='docker rmi -f $(docker images -aq)'
-alias docker-log-select='docker logs --follow --timestamps --details $(docker container ls | tail -n +2 | fzf | cut -d " " -f 1)'
+alias docker-log-fzf='docker logs --follow --timestamps --details $(docker container ls | tail -n +2 | fzf | cut -d " " -f 1)'
 alias docker-ignore-ls='rsync -avn . /dev/shm --exclude=.git --include-from=.dockerignore'
 
 alias git-stage='git add $(git diff --name-only | fzf)'
@@ -15,3 +15,8 @@ alias git-checkout='git checkout $(git branch --format="%(refname:short)" | sed 
 alias git-rebase='git rebase --autostash $(git branch --format="%(refname:short)" | fzf)'
 alias git-merge='git merge $(git branch --format="%(refname:short)" | fzf) --no-ff'
 alias git-branch-rm='git branch -D $(git branch --format="%(refname:short)" | fzf)'
+
+alias venv-create='python -m venv .venv'
+alias venv-activate='source .venv/bin/activate'
+alias venv-init='python -m venv .venv && source .venv/bin/activate'
+alias venv-deactivate='deactivate'
