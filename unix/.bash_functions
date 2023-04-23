@@ -160,7 +160,7 @@ function docker-logs-pipe() {
   docker-compose "$@" logs --follow --timestamps "$(cat)"
 }
 
-function docker-run-it() {
+function docker-run-it-fzf() {
   selected_image_line="$(docker image ls | tail -n +2 | fzf | tr -s ' ')"
 
   image_name="$(echo "${selected_image_line}" | cut -d ' ' -f 1)"

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+alias adb-stream='adb exec-out screenrecord --output-format=h264 - | ffplay -y 960 -framerate 60 -probesize 32 -sync video -'
+
 alias mongod-default='mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork'
 
 alias docker-prune='yes | docker system prune -a --force'

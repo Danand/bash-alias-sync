@@ -1,5 +1,9 @@
 #!/bin/bash
 
+function git () {
+  "git.exr $@"
+}
+
 function codew() {
   if [ -z "$1" ]; then
     path="$(cat)"
