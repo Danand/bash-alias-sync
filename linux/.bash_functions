@@ -25,6 +25,10 @@ function docker-run-it() {
   docker run -it "${image_name}" "$@"
 }
 
+function openvpn-profile() {
+  ls -1 /etc/openvpn/*.conf | fzf | ln -sf "$(cat)" "/etc/openvpn/client.conf"
+}
+
 function openvpn-connect() {
   sudo service openvpn start
 
