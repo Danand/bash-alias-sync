@@ -20,6 +20,5 @@ alias git-branch-rm='git branch -D $(git branch --format="%(refname:short)" | fz
 
 alias venv-create='python -m venv .venv'
 alias venv-activate='source .venv/bin/activate'
-alias venv-init='python -m venv .venv && source .venv/bin/activate'
 alias venv-deactivate='deactivate'
 alias venv-reset='rm -rf .venv'
