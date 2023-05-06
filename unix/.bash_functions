@@ -186,3 +186,16 @@ function venv-init() {
     pip install -r "${requirements}"
   fi
 }
+
+function git-chmod() {
+  mod="$1"
+  paths="$(ls -1a "$2")"
+
+  IFS=$'\n'
+  for path in ${paths}; do
+    chmod "${mod}" "${path}"
+    git update-index --chmod=${mod} "${path}" > /dev/null 2>&1 || \
+    git add --chmod=${mod} "${path}" > /dev/null 2>&1
+  done
+  unset IFS
+}
