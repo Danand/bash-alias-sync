@@ -35,3 +35,11 @@ function alias-reset() {
   alias-update
   cd "${current_dir}" || exit 2
 }
+
+function path-edit() {
+  tmp="$(mktemp)"
+  echo $PATH | tr ":" "\n" > "${tmp}"
+  code --new-window --wait "${tmp}"
+  export PATH="$(cat "${tmp}" | tr "\n" ":")"
+  rm -f "${tmp}"
+}
