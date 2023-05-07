@@ -26,11 +26,12 @@ function docker-run-it() {
 }
 
 function openvpn-profile() {
-  ls -1 /etc/openvpn/*.conf | fzf | ln -sf "$(cat)" "/etc/openvpn/client.conf"
+  rm -f "/etc/openvpn/client.conf"
+  ls -1 /etc/openvpn/*.conf | fzf | cp "$(cat)" "/etc/openvpn/client.conf"
 }
 
 function openvpn-connect() {
-  sudo service openvpn start
+  sudo openvpn /etc/openvpn/client.conf &
 
   sleep 5
 
@@ -45,7 +46,7 @@ function openvpn-connect() {
 }
 
 function openvpn-disconnect() {
-  sudo service openvpn stop
+  sudo killall openvpn
 
   sleep 5
 
@@ -61,6 +62,7 @@ function openvpn-disconnect() {
 
 function ipinfo() {
   curl "https://ipinfo.io/?token=${IPINFO_TOKEN}"
+  echo
 }
 
 function doctl-ssh() {
