@@ -43,3 +43,40 @@ function path-edit() {
   export PATH="$(cat "${tmp}" | tr "\n" ":")"
   rm -f "${tmp}"
 }
+
+function git-chmod() {
+  mod="$1"
+  paths="$(ls -1a "$2")"
+
+  IFS=$'\n'
+  for path in ${paths}; do
+    chmod "${mod}" "${path}"
+    git update-index --chmod=${mod} "${path}" > /dev/null 2>&1 || \
+    git add --chmod=${mod} "${path}" > /dev/null 2>&1
+  done
+  unset IFS
+}
+
+function git-branch-first-commit() {
+  branch="$(git branch --show-current)"
+
+  last_commit="HEAD"
+
+  for commit in $(git log "${branch}" --oneline --format=%H); do
+    if [ "$(git branch --contains "${commit}" | wc -l)" -gt 1 ]; then
+      echo "${last_commit}"
+      return 0
+    fi
+    last_commit="${commit}"
+  done
+}
+
+function git-reset-branches() {
+  git branch --format "%(refname:short)" --quiet 2>/dev/null | while read -r branch; do
+    if [ "${branch}" != "$(git branch --show-current)" ]; then
+      git branch -D "${branch}" 2>/dev/null
+    fi
+  done
+
+  git submodule foreach "${SHELL} -c ${FUNCNAME[0]}"
+}
