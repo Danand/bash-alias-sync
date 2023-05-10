@@ -4,7 +4,7 @@
 
 unset PROMPT
 
-for func in $(declare -F | grep -Po "declare \-fx\s+(\K[\w\-]+)"); do
+for func in $(declare -F | cut -d " " -f 3); do
   unset -f "${func}"
 done
 
