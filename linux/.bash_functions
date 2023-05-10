@@ -88,13 +88,13 @@ function doctl-update-hosts() {
     sudo sed -i "${clear_from},${clear_to}d" /etc/hosts
   fi
 
-  sudo bash -c "echo \"# ===== DigitalOcean Droplets (begin) =====\" >> /etc/hosts"
+  sudo ${SHELL} -c "echo \"# ===== DigitalOcean Droplets (begin) =====\" >> /etc/hosts"
 
   for droplet_ip in ${droplet_ips}; do
-    sudo bash -c "echo \"${droplet_ip}\" >> /etc/hosts"
+    sudo ${SHELL} -c "echo \"${droplet_ip}\" >> /etc/hosts"
   done
 
-  sudo bash -c "echo \"# ===== DigitalOcean Droplets (end) =====\" >> /etc/hosts"
+  sudo ${SHELL} -c "echo \"# ===== DigitalOcean Droplets (end) =====\" >> /etc/hosts"
 }
 
 function detect-package-manager() {
