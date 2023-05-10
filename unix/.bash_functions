@@ -201,9 +201,9 @@ function git-chmod() {
 }
 
 function git-reset-branches() {
-  git branch --format "%(refname:short)" | while read -r branch; do
+  git branch --format "%(refname:short)" --quiet 2>/dev/null | while read -r branch; do
     if [ "${branch}" != "$(git branch --show-current)" ]; then
-      git branch -D "${branch}"
+      git branch -D "${branch}" 2>/dev/null
     fi
   done
 
