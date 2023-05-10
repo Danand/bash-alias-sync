@@ -199,3 +199,13 @@ function git-chmod() {
   done
   unset IFS
 }
+
+function git-reset-branches() {
+  git branch --format "%(refname:short)" | while read -r branch; do
+    if [ "${branch}" != "$(git branch --show-current)" ]; then
+      git branch -D "${branch}"
+    fi
+  done
+
+  git submodule foreach "${SHELL} -c ${FUNCNAME[0]}"
+}
