@@ -2,13 +2,21 @@
 #
 # Contains aliases to add into `~/.bashrc` or `~/.bash_profile`.
 
-function export_functions() {
+unset PROMPT
+
+for func in $(declare -F | grep -Po "declare \-fx\s+(\K[\w\-]+)"); do
+  unset -f "${func}"
+done
+
+trap -l | tr " " "\n" | cut -f 1 | grep -v ")" | xargs -I sig "${SHELL}" -c 'trap - sig'
+
+function __export_functions() {
   for function_name in $(declare -F | grep -v "\-fx" | grep -v "\-f _" | cut -d ' ' -f 3); do
     export -f "${function_name?}"
   done
 }
 
-function apply_aliases() {
+function __apply_aliases() {
   # shellcheck source=/dev/null
   source "${BASH_ALIAS_SYNC_REPO}/$1/.bash_aliases"
 
@@ -24,24 +32,24 @@ function apply_aliases() {
   # shellcheck source=/dev/null
   source "${BASH_ALIAS_SYNC_REPO}/$1/.bash_constants"
 
-  export_functions
+  __export_functions
 }
 
 unalias -a
 
-apply_aliases "common"
-apply_aliases "unix"
+__apply_aliases "common"
+__apply_aliases "unix"
 
 if [[ "${OSTYPE}" == "darwin"* ]]; then
-  apply_aliases "macos"
+  __apply_aliases "macos"
 elif [[ "${OSTYPE}" == "linux"* ]]; then
-  apply_aliases "linux"
+  __apply_aliases "linux"
 fi
 
 if [[ "${OSTYPE}" == "msys"* ]]; then
-  apply_aliases "mingw"
+  __apply_aliases "mingw"
 fi
 
 if grep -q "microsoft" "/proc/version" && test ! -f ".dockerenv"; then
-  apply_aliases "wsl"
+  __apply_aliases "wsl"
 fi

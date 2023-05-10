@@ -19,7 +19,7 @@ HISTSIZE=9000
 HISTFILESIZE=$HISTSIZE
 HISTCONTROL=ignorespace:ignoredups
 
-bash_history_sync() {
+function __bash_history_sync() {
     builtin history -a
     HISTFILESIZE=$HISTSIZE
     builtin history -c
@@ -27,8 +27,8 @@ bash_history_sync() {
 }
 
 history() {
-    bash_history_sync
+    __bash_history_sync
     builtin history "$@"
 }
 
-PROMPT_COMMAND=bash_history_sync
+PROMPT_COMMAND=__bash_history_sync
