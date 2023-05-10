@@ -5,7 +5,7 @@
 function non-existent-command-trap() {
   if [ "$?" == "127" ]; then
     echo "Let's pretend we did not see that..."
-    history_last_line_number="$(builtin history | tail -n 1 | grep -Po "^\s*(\K\d*)\s*")"
+    local history_last_line_number="$(builtin history | tail -n 1 | grep -Po "^\s*(\K\d*)\s*")"
     builtin history -d "${history_last_line_number}"
     builtin history -r
   fi

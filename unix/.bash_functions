@@ -1,19 +1,19 @@
 #!/bin/bash
 
 function rg-fzf() {
-  results="$(rg "$1" --files-without-match)"
+  local results="$(rg "$1" --files-without-match)"
   echo "${results}" | sort --uniq | fzf
 }
 
 function find-fzf() {
-  results="$(find "$@")"
+  local results="$(find "$@")"
   echo "${results}" | sort --uniq | fzf
 }
 
 function git-history-fzf() {
-  path="$1"
+  local path="$1"
 
-  commit=$(git log --format="%h^%s^%aN" --full-diff -- "${path}" | column -t -s "^" | fzf | cut -d " " -f 1)
+  local commit=$(git log --format="%h^%s^%aN" --full-diff -- "${path}" | column -t -s "^" | fzf | cut -d " " -f 1)
 
   echo -e "\nShow diff for commit ${commit}\n\n"
 
@@ -27,7 +27,9 @@ function git-cd-submodule-fzf() {
 }
 
 function git-merge-fzf() {
-  pattern="$1"
+  local pattern="$1"
+
+  local branches
 
   if [ -z "${pattern}" ]; then
     branches="$(git branch -r --format="%(refname:short)")"
@@ -39,7 +41,7 @@ function git-merge-fzf() {
     return 0
   fi
 
-  selected_branch="$(echo "${branches}" | fzf)"
+  slocal elected_branch="$(echo "${branches}" | fzf)"
 
   if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
     return 0
@@ -49,7 +51,9 @@ function git-merge-fzf() {
 }
 
 function git-rebase-current-branch-fzf() {
-  pattern="$1"
+  local pattern="$1"
+
+  local branches
 
   if [ -z "${pattern}" ]; then
     branches="$(git branch --format="%(refname:short)")"
@@ -61,14 +65,14 @@ function git-rebase-current-branch-fzf() {
     return 0
   fi
 
-  selected_branch="$(echo "${branches}" | fzf)"
+  local selected_branch="$(echo "${branches}" | fzf)"
 
   if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
     return 0
   fi
 
-  ours_branch="$(git branch --show-current)"
-  ours_first_commit=$(git-branch-first-commit)
+  local ours_branch="$(git branch --show-current)"
+  local ours_first_commit=$(git-branch-first-commit)
 
   git rebase -i --autostash --onto "${selected_branch}" "${ours_first_commit}^" "HEAD"
   git update-ref "refs/heads/${ours_branch}" HEAD
@@ -76,7 +80,9 @@ function git-rebase-current-branch-fzf() {
 }
 
 function git-checkout-fzf() {
-  pattern="$1"
+  local pattern="$1"
+
+  local branches
 
   if [ -z "${pattern}" ]; then
     branches="$(git branch --format="%(refname:short)")"
@@ -88,7 +94,7 @@ function git-checkout-fzf() {
     return 0
   fi
 
-  selected_branch="$(echo "${branches}" | fzf)"
+  local selected_branch="$(echo "${branches}" | fzf)"
 
   if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
     return 0
@@ -98,7 +104,9 @@ function git-checkout-fzf() {
 }
 
 function git-checkout-file-fzf() {
-  pattern="$1"
+  local pattern="$1"
+
+  local branches
 
   if [ -z "${pattern}" ]; then
     branches="$(git branch -r --format="%(refname:short)")"
@@ -110,20 +118,20 @@ function git-checkout-file-fzf() {
     return 0
   fi
 
-  selected_branch="$(echo "${branches}" | fzf)"
+  local selected_branch="$(echo "${branches}" | fzf)"
 
   if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
     return 0
   fi
 
-  selected_dir="."
-  selected_file=""
+  local selected_file=""
+  local selected_dir="."
 
   while [ -z "${selected_file}" ]; do
-    selected_item="$(git ls-tree --format="%(objecttype)%x09%(path)" "${selected_branch}" "${selected_dir}/" | fzf)"
+    local selected_item="$(git ls-tree --format="%(objecttype)%x09%(path)" "${selected_branch}" "${selected_dir}/" | fzf)"
 
-    selected_item_type=$(echo "${selected_item}" | cut -f 1)
-    selected_item_name=$(echo "${selected_item}" | cut -f 2)
+    local selected_item_type=$(echo "${selected_item}" | cut -f 1)
+    local selected_item_name=$(echo "${selected_item}" | cut -f 2)
 
     if [ "${selected_item_type}" == "blob" ]; then
       selected_file="${selected_item_name}"
@@ -147,9 +155,9 @@ function docker-logs-pipe() {
 }
 
 function docker-run-it-fzf() {
-  selected_image_line="$(docker image ls | tail -n +2 | fzf | tr -s ' ')"
+  local selected_image_line="$(docker image ls | tail -n +2 | fzf | tr -s ' ')"
 
-  image_name="$(echo "${selected_image_line}" | cut -d ' ' -f 1)"
+  local image_name="$(echo "${selected_image_line}" | cut -d ' ' -f 1)"
   image_name+=":"
   image_name+="$(echo "${selected_image_line}" | cut -d ' ' -f 2)"
 
@@ -157,7 +165,7 @@ function docker-run-it-fzf() {
 }
 
 function ffmpeg-speedup() {
-  speed=$(bc -l <<< "scale=2; 1/$2")
+  local speed=$(bc -l <<< "scale=2; 1/$2")
   ffmpeg -i "$1" -filter:v "setpts=${speed}*PTS" "${@:3}" "speed-up-$1"
 }
 

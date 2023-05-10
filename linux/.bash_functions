@@ -1,12 +1,12 @@
 #!/bin/bash
 
 function rg-fzf() {
-  results="$(rg "$1" --files-without-match)"
+  local results="$(rg "$1" --files-without-match)"
   echo "${results}" | sort --uniq | fzf
 }
 
 function find-fzf() {
-  results="$(find "$@")"
+  local results="$(find "$@")"
   echo "${results}" | sort --uniq | fzf
 }
 
@@ -16,9 +16,9 @@ function code-new() {
 }
 
 function docker-run-it() {
-  selected_image_line="$(docker image ls | tail -n +2 | fzf | tr -s ' ')"
+  local selected_image_line="$(docker image ls | tail -n +2 | fzf | tr -s ' ')"
 
-  image_name="$(echo "${selected_image_line}" | cut -d ' ' -f 1)"
+  local image_name="$(echo "${selected_image_line}" | cut -d ' ' -f 1)"
   image_name+=":"
   image_name+="$(echo "${selected_image_line}" | cut -d ' ' -f 2)"
 
@@ -76,13 +76,13 @@ function doctl-ssh() {
 }
 
 function doctl-update-hosts() {
-  droplet_ips="$(doctl compute droplet list \
+  local droplet_ips="$(doctl compute droplet list \
     --format="PublicIPv4,Name" \
     --no-header | \
     tr -s " ")"
 
-  clear_from="$(sudo grep -n "DigitalOcean.*begin" /etc/hosts | cut -d ":" -f 1)"
-  clear_to="$(sudo grep -n "DigitalOcean.*end" /etc/hosts | cut -d ":" -f 1)"
+  local clear_from="$(sudo grep -n "DigitalOcean.*begin" /etc/hosts | cut -d ":" -f 1)"
+  local clear_to="$(sudo grep -n "DigitalOcean.*end" /etc/hosts | cut -d ":" -f 1)"
 
   if [ -n "${clear_from}" ] && [ -n "${clear_to}" ]; then
     sudo sed -i "${clear_from},${clear_to}d" /etc/hosts

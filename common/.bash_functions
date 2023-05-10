@@ -9,7 +9,7 @@ function alias-update() {
 }
 
 function alias-pull() {
-  current_dir=$(pwd)
+  local current_dir=$(pwd)
   cd "$BASH_ALIAS_SYNC_REPO" || exit 2
   git pull --rebase --autostash
   alias-update
@@ -17,7 +17,7 @@ function alias-pull() {
 }
 
 function alias-push() {
-  current_dir=$(pwd)
+  local current_dir=$(pwd)
   cd "$BASH_ALIAS_SYNC_REPO" || exit 2
   git pull --rebase --autostash
   git add -A
@@ -28,7 +28,7 @@ function alias-push() {
 }
 
 function alias-reset() {
-  current_dir=$(pwd)
+  local current_dir=$(pwd)
   cd "$BASH_ALIAS_SYNC_REPO" || exit 2
   git reset --hard
   git clean -fd
@@ -37,7 +37,7 @@ function alias-reset() {
 }
 
 function path-edit() {
-  tmp="$(mktemp)"
+  local tmp="$(mktemp)"
   echo $PATH | tr ":" "\n" > "${tmp}"
   code --new-window --wait "${tmp}"
   export PATH="$(cat "${tmp}" | tr "\n" ":")"
@@ -45,8 +45,8 @@ function path-edit() {
 }
 
 function git-chmod() {
-  mod="$1"
-  paths="$(ls -1a "$2")"
+  local mod="$1"
+  local paths="$(ls -1a "$2")"
 
   IFS=$'\n'
   for path in ${paths}; do
@@ -58,15 +58,16 @@ function git-chmod() {
 }
 
 function git-branch-first-commit() {
-  branch="$(git branch --show-current)"
+  local branch="$(git branch --show-current)"
 
-  last_commit="HEAD"
+  local last_commit="HEAD"
 
   for commit in $(git log "${branch}" --oneline --format=%H); do
     if [ "$(git branch --contains "${commit}" | wc -l)" -gt 1 ]; then
       echo "${last_commit}"
       return 0
     fi
+
     last_commit="${commit}"
   done
 }
