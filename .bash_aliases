@@ -5,7 +5,7 @@
 unset PROMPT
 
 for func in $(declare -F | cut -d " " -f 3); do
-  if [[ "${func}" == __git* ]]; then
+  if [[ "${func}" == _* ]]; then
     continue
   fi
 
