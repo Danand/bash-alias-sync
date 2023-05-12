@@ -4,13 +4,16 @@
 
 unset PROMPT
 
-for func in $(declare -F | cut -d " " -f 3); do
-  if [[ "${func}" == _* ]]; then
-    continue
-  fi
+IFS=$'\n'
+for declaration in $(declare -F); do
+  options=$(echo "${declaration}" | cut -d " " -f 2)
+  func=$(echo "${declaration}" | cut -d " " -f 3)
 
-  unset -f "${func}"
+  if [ "${options}" == "-fx" ]; then
+    unset -f "${func}"
+  fi
 done
+unset IFS
 
 trap -l | tr " " "\n" | cut -f 1 | grep -v ")" | xargs -I sig "${SHELL}" -c 'trap - sig'
 
