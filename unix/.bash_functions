@@ -146,18 +146,21 @@ function git-checkout-file-fzf() {
   git checkout "${selected_branch}" -- "${selected_file}"
 }
 
-function docker-logs() {
+function docker-compose-logs() {
   docker-compose "$@" logs --follow --timestamps
 }
 
-function docker-logs-pipe() {
+function docker-compose-logs-pipe() {
   docker-compose "$@" logs --follow --timestamps "$(cat)"
 }
 
 function docker-run-it-fzf() {
-  local selected_image_line="$(docker image ls | tail -n +2 | fzf | tr -s ' ')"
+  local selected_image_line
+  selected_image_line="$(docker image ls | tail -n +2 | fzf | tr -s ' ')"
 
-  local image_name="$(echo "${selected_image_line}" | cut -d ' ' -f 1)"
+  local image_name
+
+  image_name="$(echo "${selected_image_line}" | cut -d ' ' -f 1)"
   image_name+=":"
   image_name+="$(echo "${selected_image_line}" | cut -d ' ' -f 2)"
 
@@ -165,13 +168,17 @@ function docker-run-it-fzf() {
 }
 
 function ffmpeg-speedup() {
-  local speed=$(bc -l <<< "scale=2; 1/$2")
+  local speed
+  speed=$(bc -l <<< "scale=2; 1/$2")
   ffmpeg -i "$1" -filter:v "setpts=${speed}*PTS" "${@:3}" "speed-up-$1"
 }
 
 function venv-init() {
   python -m venv .venv
-  source .venv/bin/activate
+
+  # shellcheck source=/dev/null
+  source ".venv/bin/activate"
+
   pip install --upgrade pip
 
   local requirements="./requirements.txt"

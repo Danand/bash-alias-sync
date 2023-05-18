@@ -9,7 +9,9 @@ function alias-update() {
 }
 
 function alias-pull() {
-  local current_dir=$(pwd)
+  local current_dir
+  current_dir=$(pwd)
+
   cd "$BASH_ALIAS_SYNC_REPO" || exit 2
   git pull --rebase --autostash
   alias-update
@@ -17,7 +19,9 @@ function alias-pull() {
 }
 
 function alias-push() {
-  local current_dir=$(pwd)
+  local current_dir
+  current_dir=$(pwd)
+
   cd "$BASH_ALIAS_SYNC_REPO" || exit 2
   git pull --rebase --autostash
   git add -A
@@ -28,7 +32,9 @@ function alias-push() {
 }
 
 function alias-reset() {
-  local current_dir=$(pwd)
+  local current_dir
+  current_dir=$(pwd)
+
   cd "$BASH_ALIAS_SYNC_REPO" || exit 2
   git reset --hard
   git clean -fd
@@ -37,28 +43,36 @@ function alias-reset() {
 }
 
 function path-edit() {
-  local tmp="$(mktemp)"
-  echo $PATH | tr ":" "\n" > "${tmp}"
+  local tmp
+  tmp="$(mktemp)"
+
+  echo "${PATH}" | tr ":" "\n" > "${tmp}"
   code --new-window --wait "${tmp}"
-  export PATH="$(cat "${tmp}" | tr "\n" ":")"
+
+  PATH="$(tr "\n" ":" < "${tmp}")"
+  export PATH
+
   rm -f "${tmp}"
 }
 
 function git-chmod() {
   local mod="$1"
-  local paths="$(ls -1a "$2")"
+
+  local paths
+  paths="$(ls -1a "$2")"
 
   IFS=$'\n'
   for path in ${paths}; do
     chmod "${mod}" "${path}"
-    git update-index --chmod=${mod} "${path}" > /dev/null 2>&1 || \
-    git add --chmod=${mod} "${path}" > /dev/null 2>&1
+    git update-index --chmod="${mod}" "${path}" > /dev/null 2>&1 || \
+    git add --chmod="${mod}" "${path}" > /dev/null 2>&1
   done
   unset IFS
 }
 
 function git-branch-first-commit() {
-  local branch="$(git branch --show-current)"
+  local branch
+  branch="$(git branch --show-current)"
 
   local last_commit="HEAD"
 
@@ -80,4 +94,10 @@ function git-reset-branches() {
   done
 
   git submodule foreach "${SHELL} -c ${FUNCNAME[0]}"
+}
+
+function measure() {
+  time "${@}"
+  echo 1>&2
+  echo "Time elapsed for \`${*}\`" 1>&2
 }
