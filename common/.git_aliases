@@ -16,3 +16,4 @@ git config --global alias.branch-set-upstream '!set_upstream() { git branch --se
 git config --global alias.reset-hard '!reset() { rm -f .git/index.lock && git reset --hard && git clean -fd && git submodule update; }; reset'
 git config --global alias.pull-hard '!reset() { rm -f .git/index.lock && git reset --hard origin/$(git branch --show-current) && git clean -fd && git submodule update; }; reset'
 git config --global alias.reset-to-remote '!reset() { rm -f .git/index.lock && git reset --hard origin/$(git branch --show-current) && git clean -fd && git submodule update; }; reset'
+git config --global alias.graph 'log --all --graph --oneline --first-parent'
