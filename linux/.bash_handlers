@@ -3,10 +3,11 @@
 if [ "$(detect-package-manager)" == "apt" ]; then
   function __try_install_via_apt() { apt -qq list "$1" 2>/dev/null | grep -q "installed" || sudo apt install -y "$1" || true; }
 
-  __try_install_via_apt xclip
-  __try_install_via_apt ripgrep
-  __try_install_via_apt fzf
-  __try_install_via_apt jq
+  __try_install_via_apt "net-tools"
+  __try_install_via_apt "xclip"
+  __try_install_via_apt "ripgrep"
+  __try_install_via_apt "fzf"
+  __try_install_via_apt "jq"
 
   unset -f __try_install_via_apt
 fi

@@ -118,3 +118,13 @@ function detect-package-manager() {
 
   return 2
 }
+
+function port-ls-busy() {
+  sudo netstat -lnp | \
+  grep "LISTEN" | \
+  awk '{print $4}' | \
+  awk -F ":" '{print $NF}' | \
+  sort -n | \
+  uniq -c | \
+  awk '{if ($1 != 1) print $2}'
+}
