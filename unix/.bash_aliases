@@ -25,3 +25,6 @@ alias venv-create='python -m venv .venv'
 alias venv-activate='source .venv/bin/activate'
 alias venv-deactivate='deactivate'
 alias venv-reset='rm -rf .venv'
+
+alias pip-restore='pip install --require-virtualenv -r requirements.txt'
+alias pip-uninstall-all='pip freeze | xargs pip uninstall --require-virtualenv -y'
