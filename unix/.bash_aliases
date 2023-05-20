@@ -14,12 +14,12 @@ alias docker-kill-fzf='docker kill $(docker ps | tail -n +2 | fzf | cut -d " " -
 alias docker-rm-fzf='docker rm $(docker ps -f "status=exited" | tail -n +2 | fzf | cut -d " " -f 1)'
 alias docker-ignore-ls='rsync -avn . /dev/shm --exclude=.git --include-from=.dockerignore'
 
-alias git-stage='git add $(git diff --name-only | fzf)'
-alias git-unstage='git reset -- $(git diff --name-only --cached | fzf)'
-alias git-checkout='git checkout $(git branch --format="%(refname:short)" | sed "s/origin\///" | fzf)'
-alias git-rebase='git rebase --autostash $(git branch --format="%(refname:short)" | fzf)'
-alias git-merge='git merge $(git branch --format="%(refname:short)" | fzf) --no-ff'
-alias git-branch-rm='git branch -D $(git branch --format="%(refname:short)" | fzf)'
+alias git-stage-fzf='git add $(git diff --name-only | fzf)'
+alias git-unstage-fzf='git reset -- $(git diff --name-only --cached | fzf)'
+alias git-checkout-fzf='git checkout $(git branch --format="%(refname:short)" | sed "s/origin\///" | fzf)'
+alias git-rebase-fzf='git rebase --autostash $(git branch --format="%(refname:short)" | fzf)'
+alias git-merge-fzf='git merge $(git branch --format="%(refname:short)" | fzf) --no-ff'
+alias git-branch-rm-fzf='git branch -D $(git branch --format="%(refname:short)" | fzf)'
 
 alias venv-create='python -m venv .venv'
 alias venv-activate='source .venv/bin/activate'
@@ -28,3 +28,4 @@ alias venv-reset='rm -rf .venv'
 
 alias pip-restore='pip install --require-virtualenv -r requirements.txt'
 alias pip-uninstall-all='pip freeze | xargs pip uninstall --require-virtualenv -y'
+alias pip-uninstall-fzf='pip freeze | fzf | pip uninstall $(cat) -y'
