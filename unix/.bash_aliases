@@ -5,11 +5,12 @@ alias adb-stream='adb exec-out screenrecord --output-format=h264 - | ffplay -y 9
 alias mongod-default='mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork'
 
 alias docker-prune='yes | docker system prune -a --force'
+alias docker-stop-all='docker stop $(docker ps -q)'
 alias docker-kill-all='docker kill $(docker ps -q)'
 alias docker-rm-all='docker rm $(docker ps -a -q)'
 alias docker-rmi-all='docker rmi -f $(docker images -aq)'
 alias docker-logs-fzf='docker logs --follow --timestamps --details $(docker container ls | tail -n +2 | fzf | cut -d " " -f 1)'
-alias docker-stop-fzf='docker stop $(docker ps | tail -n +2 | fzf | cut -d " " -f 1)'
+alias docker-stats-fzf='docker stats $(docker ps | tail -n +2 | fzf | cut -d " " -f 1)'
 alias docker-kill-fzf='docker kill $(docker ps | tail -n +2 | fzf | cut -d " " -f 1)'
 alias docker-rm-fzf='docker rm $(docker ps -f "status=exited" | tail -n +2 | fzf | cut -d " " -f 1)'
 alias docker-ignore-ls='rsync -avn . /dev/shm --exclude=.git --include-from=.dockerignore'
