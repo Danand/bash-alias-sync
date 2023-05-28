@@ -128,3 +128,9 @@ function port-ls-busy() {
   uniq -c | \
   awk '{if ($1 != 1) print $2}'
 }
+
+function next() {
+  wmctrl -n $(expr $(wmctrl -d | wc -l) + 1)
+  wmctrl -s $(expr $(wmctrl -d | grep "*" | cut -d " " -f 1) + 1)
+  $@
+}
