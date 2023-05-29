@@ -101,6 +101,8 @@ function git-checkout-fzf() {
   fi
 
   git checkout "${@:2}" "${selected_branch}"
+
+  git submodule update
 }
 
 function git-checkout-file-fzf() {
