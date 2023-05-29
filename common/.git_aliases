@@ -4,7 +4,7 @@
 
 git config --global alias.back 'reset --hard HEAD~1'
 git config --global alias.conflicts 'diff --name-only --diff-filter=U'
-git config --global alias.checkout-force '!checkout() { rm -f .git/index.lock && git checkout --force $1 && git submodule update; }; git-checkout-force'
+git config --global alias.checkout-force '!checkout() { rm -f .git/index.lock && git checkout --force $1 && git submodule update; }; checkout'
 git config --global alias.background-pull '!bgpull() { git fetch origin $1:$1 && git lfs fetch origin $1; }; bgpull'
 git config --global alias.background-pull-remote '!bgpull() { git fetch $1 $2:$2 && git lfs fetch $1 $2; }; bgpull'
 git config --global alias.unbranch '!unbranch() { current_branch=$(git branch --show-current) && git fetch && git submodule foreach git fetch && git checkout $1 --force && git submodule update && git branch -D $current_branch && git fetch --prune && git pull; }; unbranch'
