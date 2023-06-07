@@ -1,7 +1,7 @@
 #!/bin/bash
 
-function git () {
-  "git.exr $@"
+function git() {
+  git.exe "$@"
 }
 
 function codew() {

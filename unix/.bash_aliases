@@ -19,7 +19,6 @@ alias docker-ignore-ls='rsync -avn . /dev/shm --exclude=.git --include-from=.doc
 
 alias git-stage-fzf='git add $(git diff --name-only | fzf)'
 alias git-unstage-fzf='git reset -- $(git diff --name-only --cached | fzf)'
-alias git-checkout-fzf='git checkout $(git branch --format="%(refname:short)" | sed "s/origin\///" | fzf)'
 alias git-rebase-fzf='git rebase --autostash $(git branch --format="%(refname:short)" | fzf)'
 alias git-merge-fzf='git merge $(git branch --format="%(refname:short)" | fzf) --no-ff'
 alias git-branch-rm-fzf='git branch -D $(git branch --format="%(refname:short)" | fzf)'
