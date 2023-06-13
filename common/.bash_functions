@@ -96,6 +96,20 @@ function git-reset-branches() {
   git submodule foreach "${SHELL} -c ${FUNCNAME[0]}"
 }
 
+function git-bump() {
+  tag_latest="$(git describe --tags --abbrev=0)"
+
+	patch_old="$(echo "${tag_latest}" | awk -F '.' '{ print $NF }')"
+	patch_new="$(( $patch_old + 1 ))"
+	major_minor="$(echo "${tag_latest}" | awk -F '.' '{ print $1"."$2 }')"
+
+	tag_new="${major_minor}.${patch_new}"
+
+	git tag "${tag_new}"
+
+  echo "Tagged ${tag_new} ($(git rev-parse --short HEAD)), previous tag was ${tag_latest} ($(git rev-parse --short "${tag_latest}"))" 1>&2
+}
+
 function measure() {
   time "${@}"
   echo 1>&2
