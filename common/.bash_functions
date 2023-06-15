@@ -115,3 +115,18 @@ function measure() {
   echo 1>&2
   echo "Time elapsed for \`${*}\`" 1>&2
 }
+
+function history-trim() {
+  if [ -z "$1" ]; then
+    echo "usage: history-trim <amount>" 1>&2
+    return 1
+  fi
+
+  builtin history -c
+  builtin history -r
+
+  builtin history \
+  | tail -n "$1" \
+  | sed -e 's/^[ ]*[0-9]\+[ ]*//' \
+  > "${HOME}/.bash_history"
+}

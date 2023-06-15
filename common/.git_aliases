@@ -35,11 +35,26 @@ git config --global alias.unbranch '!unbranch() { \
   git pull; \
 }; unbranch'
 
-git config --global alias.push-exact '!push() { \
-  git push origin "$(git branch --show-current)" && \
+git config --global alias.pull-exact '!pull() { \
+  current_branch="$(git branch --show-current)" && \
   git branch \
-    --set-upstream-to="origin/$(git branch --show-current)" \
-    "$(git branch --show-current)"; \
+    --set-upstream-to="origin/${current_branch}" \
+    "${current_branch}" && \
+  git pull \
+    --no-ff \
+    --rebase \
+    --autostash \
+    --tags \
+    origin \
+    "${current_branch}:${current_branch}"; \
+}; pull'
+
+git config --global alias.push-exact '!push() { \
+  current_branch="$(git branch --show-current)" && \
+  git push origin "${current_branch}" && \
+  git branch \
+    --set-upstream-to="origin/${current_branch}" \
+    "${current_branch}"; \
 }; push'
 
 git config --global alias.fetch-all '!fetch() { \
@@ -61,17 +76,18 @@ git config --global alias.clear '!reset() { \
   git submodule update; \
 }; reset'
 
-git config --global alias.pull-hard '!reset() { \
+git config --global alias.pull-hard '!pull() { \
   rm -f ".git/index.lock" && \
   git reset --hard "origin/$(git branch --show-current)" && \
   git clean -fd && \
   git submodule update; \
-}; reset'
+}; pull'
 
 git config --global alias.branch-track '!track() { \
+  current_branch="$(git branch --show-current)" && \
   git branch \
-    --set-upstream-to="origin/$(git branch --show-current)" \
-    "$(git branch --show-current)"; \
+    --set-upstream-to="origin/${current_branch}" \
+    "${current_branch}"; \
 }; track'
 
 git config --global alias.reset-to-remote '!reset() { \
