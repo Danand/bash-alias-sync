@@ -31,7 +31,9 @@ function openvpn-profile() {
 }
 
 function openvpn-connect() {
-  sudo openvpn /etc/openvpn/client.conf &
+  sudo killall openvpn 2>/dev/null
+
+  sudo openvpn "/etc/openvpn/client.conf" &
 
   sleep 5
 

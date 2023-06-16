@@ -110,6 +110,14 @@ function git-bump() {
   echo "Tagged ${tag_new} ($(git rev-parse --short HEAD)), previous tag was ${tag_latest} ($(git rev-parse --short "${tag_latest}"))" 1>&2
 }
 
+function git-repo-ls {
+  find . -maxdepth 2 -type d -name ".git" -print0 | xargs -0 -I git_dir $SHELL -c 'dirname git_dir'
+}
+
+function git-repo-rm-fzf {
+  git-repo-ls | fzf | rm -rf $(cat)
+}
+
 function measure() {
   time "${@}"
   echo 1>&2
