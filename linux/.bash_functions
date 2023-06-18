@@ -15,16 +15,6 @@ function code-new() {
   code "$1" --reuse-window
 }
 
-function docker-run-it() {
-  local selected_image_line="$(docker image ls | tail -n +2 | fzf | tr -s ' ')"
-
-  local image_name="$(echo "${selected_image_line}" | cut -d ' ' -f 1)"
-  image_name+=":"
-  image_name+="$(echo "${selected_image_line}" | cut -d ' ' -f 2)"
-
-  docker run -it "${image_name}" "$@"
-}
-
 function openvpn-profile() {
   rm -f "/etc/openvpn/client.conf"
   ls -1 /etc/openvpn/*.conf | fzf | cp "$(cat)" "/etc/openvpn/client.conf"
@@ -143,6 +133,20 @@ function next() {
 function apport-enable() {
   sudo $SHELL -c 'echo "enabled=1" > "/etc/default/apport"'
   sudo service apport restart
+}
+
+function apport-clear() {
+  find \
+    "/var/crash" \
+    -type f \
+    -name "*.crash" \
+    -print0 \
+  | xargs \
+    -0 \
+    -I path \
+    $SHELL \
+      -c \
+      'sudo rm -f "path"'
 }
 
 function apport-unpack-fzf() {

@@ -13,6 +13,7 @@ alias docker-logs-fzf='docker logs --follow --timestamps --details $(docker cont
 alias docker-stats-fzf='docker stats $(docker ps | tail -n +2 | fzf | cut -d " " -f 1)'
 alias docker-stop-fzf='docker stop $(docker ps | tail -n +2 | fzf | cut -d " " -f 1)'
 alias docker-kill-fzf='docker kill $(docker ps | tail -n +2 | fzf | cut -d " " -f 1)'
+alias docker-restart-fzf='docker restart $(docker ps -a | tail -n +2 | fzf | cut -d " " -f 1)'
 alias docker-rm-fzf='docker rm $(docker ps -f "status=exited" | tail -n +2 | fzf | cut -d " " -f 1)'
 alias docker-rmi-fzf='docker rmi -f $(docker image ls --format="{{.ID}}\t{{.Repository}}\t{{.Tag}}" | column -t | fzf | cut -d " " -f 1)'
 alias docker-ignore-ls='rsync -avn . /dev/shm --exclude=.git --include-from=.dockerignore'
