@@ -68,20 +68,23 @@ function ipinfo() {
 }
 
 function doctl-ssh() {
-  doctl compute ssh \
-  "$(doctl compute droplet list \
-    --format="ID,Name,PublicIPv4,Region,Image" \
-    --no-header | \
-    fzf | \
-    tr -s " " | \
-    cut -d " " -f 1)"
+  doctl compute ssh "$(\
+    doctl compute droplet list \
+      --format="ID,Name,PublicIPv4,Region,Image" \
+      --no-header \
+    | fzf \
+    | tr -s " " \
+    | cut -d " " -f 1 \
+  )"
 }
 
 function doctl-update-hosts() {
-  local droplet_ips="$(doctl compute droplet list \
-    --format="PublicIPv4,Name" \
-    --no-header | \
-    tr -s " ")"
+  local droplet_ips="$(\
+    doctl compute droplet list \
+      --format="PublicIPv4,Name" \
+      --no-header \
+    | tr -s " "\
+  )"
 
   local clear_from="$(sudo grep -n "DigitalOcean.*begin" /etc/hosts | cut -d ":" -f 1)"
   local clear_to="$(sudo grep -n "DigitalOcean.*end" /etc/hosts | cut -d ":" -f 1)"
@@ -122,17 +125,71 @@ function detect-package-manager() {
 }
 
 function port-ls-busy() {
-  sudo netstat -lnp | \
-  grep "LISTEN" | \
-  awk '{print $4}' | \
-  awk -F ":" '{print $NF}' | \
-  sort -n | \
-  uniq -c | \
-  awk '{if ($1 != 1) print $2}'
+  sudo netstat -lnp \
+  | grep "LISTEN" \
+  | awk '{print $4}' \
+  | awk -F ":" '{print $NF}' \
+  | sort -n \
+  | uniq -c \
+  | awk '{if ($1 != 1) print $2}'
 }
 
 function next() {
   wmctrl -n $(expr $(wmctrl -d | wc -l) + 1)
   wmctrl -s $(expr $(wmctrl -d | grep "*" | cut -d " " -f 1) + 1)
   $@
+}
+
+function apport-enable() {
+  sudo $SHELL -c 'echo "enabled=1" > "/etc/default/apport"'
+  sudo service apport restart
+}
+
+function apport-unpack-fzf() {
+  unpack_dir="$(\
+    mktemp \
+      --quiet \
+      --directory \
+      --dry-run \
+  )"
+
+  crash_dump="$(\
+    find \
+      "/var/crash" \
+      -type f \
+      -name "*.crash" \
+    | fzf \
+  )"
+
+  if [ -z "${crash_dump}" ]; then
+    return 0;
+  fi
+
+  echo "Unpacking..." 1>&2
+
+  apport-unpack \
+    "${crash_dump}" \
+    "${unpack_dir}"
+
+  echo "Requesting backtrace..." 1>&2
+
+  gdb_commands="$(\
+    mktemp \
+      --quiet \
+      --dry-run \
+  )"
+
+  echo "backtrace" > "${gdb_commands}"
+  echo "exit" >> "${gdb_commands}"
+
+  (
+    cd "${unpack_dir}" && \
+    gdb \
+      "$(cat "ExecutablePath")" \
+      --command="${gdb_commands}" \
+      "CoreDump"
+  )
+
+  rm -rf "${unpack_dir}"
+  rm -f "${gdb_commands}"
 }
