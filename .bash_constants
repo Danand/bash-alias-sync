@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+# Constants for sharing during loading of aliases.
+
+UPDATE_MARKER_FILE="/tmp/bash-alias-sync-sheduled-update"
+export UPDATE_MARKER_FILE
