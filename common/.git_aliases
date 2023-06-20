@@ -14,15 +14,15 @@ git config --global alias.checkout-force '!checkout() { \
   git submodule update; \
 }; checkout'
 
-git config --global alias.background-pull '!bgpull() { \
+git config --global alias.background-pull '!pull() { \
   git fetch origin "$1:$1" && \
   git lfs fetch origin "$1"; \
-}; bgpull'
+}; pull'
 
-git config --global alias.background-pull-remote '!bgpull() { \
+git config --global alias.background-pull-remote '!pull() { \
   git fetch "$1" "$2:$2" && \
   git lfs fetch "$1" "$2"; \
-}; bgpull'
+}; pull'
 
 git config --global alias.unbranch '!unbranch() { \
   current_branch="$(git branch --show-current)" && \

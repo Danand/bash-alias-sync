@@ -14,6 +14,9 @@ function path-edit() {
 }
 
 function git-chmod() {
+  file_mode_enabled="$(git config --get core.fileMode)"
+  git config core.fileMode true
+
   local mod="$1"
 
   local paths
@@ -26,6 +29,12 @@ function git-chmod() {
     || git add --chmod="${mod}" "${path}" > /dev/null 2>&1
   done
   unset IFS
+
+  if [ -z "${file_mode_enabled}" ]; then
+    git config --unset core.fileMode
+  else
+    git config core.fileMode "${file_mode_enabled}"
+  fi
 }
 
 function git-branch-first-commit() {
