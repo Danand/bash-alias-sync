@@ -96,3 +96,16 @@ git config --global alias.reset-to-remote '!reset() { \
   git clean -fd && \
   git submodule update; \
 }; reset'
+
+git config --global alias.shrink '!shrink() { \
+  git config pack.windowMemory "100m"
+  git config pack.packSizeLimit "100g"
+  git config gc.auto 0 && \
+  git fetch --prune && \
+  git prune && \
+  git repack -a -d -f --window=0 && \
+  git gc && \
+  git config --unset pack.windowMemory && \
+  git config --unset pack.packSizeLimit && \
+  git config --unset gc.auto
+}; shrink'
