@@ -10,6 +10,24 @@ function path-edit() {
   PATH="$(tr "\n" ":" < "${tmp}")"
   export PATH
 
+  readarray -t paths < "${tmp}"
+
+  target_file="${HOME}/.bash_path"
+
+  if [ ! -f "${target_file}" ]; then
+    target_file="${HOME}/.bashrc"
+  fi
+
+  content="$(grep -v -E ".*export PATH=.*" "${target_file}")"
+
+  echo "${content}" > "${target_file}"
+
+  for path in ${paths[@]}; do
+    echo -n 'export PATH="' >> target_file
+    echo -n "${path}"
+    echo -n ':$PATH"'
+  done
+
   rm -f "${tmp}"
 }
 
