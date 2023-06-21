@@ -32,3 +32,16 @@ history() {
 }
 
 PROMPT_COMMAND=__bash_history_sync
+
+# Set up custom completions:
+
+if [ -f "${HOME}/.ssh/config" ]; then
+  complete \
+    -W "$( \
+      grep \
+        "^Host" \
+        "${HOME}/.ssh/config" \
+      | awk '{print $2}' \
+    )" \
+    "ssh"
+fi
