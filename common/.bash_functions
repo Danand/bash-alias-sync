@@ -123,3 +123,27 @@ function history-trim() {
   | sed -e 's/^[ ]*[0-9]\+[ ]*//' \
   > "${HOME}/.bash_history"
 }
+
+function remember() {
+  cache_dir="/tmp/cache-remember"
+
+  if [ "$1" == "--forget" ]; then
+    rm -rf "${cache_dir}"
+    shift
+  fi
+
+  if [ $# -eq 0 ]; then
+    return 0
+  fi
+
+  mkdir -p "${cache_dir}"
+
+  cache_key="$(echo "${@}" | base64 | grep -o "\w*")"
+  cache_file="${cache_dir}/${cache_key}"
+
+  if [ -f "${cache_file}" ]; then
+    cat "${cache_file}"
+  else
+    "${@}" | tee "${cache_file}"
+  fi
+}
