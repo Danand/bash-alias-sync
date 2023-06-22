@@ -125,10 +125,16 @@ function history-trim() {
 }
 
 function remember() {
-  cache_dir="/tmp/cache-remember"
+  cache_dir_root="/tmp/cache-remember"
+  cache_dir="${cache_dir_root}/$$"
 
   if [ "$1" == "--forget" ]; then
     rm -rf "${cache_dir}"
+    shift
+  fi
+
+  if [ "$1" == "--clear" ]; then
+    rm -rf "${cache_dir_root}"
     shift
   fi
 
@@ -138,12 +144,31 @@ function remember() {
 
   mkdir -p "${cache_dir}"
 
-  cache_key="$(echo "${@}" | base64 | grep -o "\w*")"
+  hash_data="${*}"
+
+  git rev-parse HEAD > /dev/null 2>&1 || eval is_in_repo=$? && true
+
+  # shellcheck disable=SC2154
+  if [ "${is_in_repo}" == "0" ]; then
+    hash_data+="$(git rev-parse HEAD)"
+    hash_data+="$(git diff HEAD --name-only)"
+  else
+    hash_data+="$(date +%Y-%m-%d-%H)"
+    hash_data+="$(pwd)"
+  fi
+
+  # shellcheck disable=SC2207
+  hash_array=($(echo "${hash_data}" | md5sum))
+
+  # shellcheck disable=SC2116
+  # shellcheck disable=SC2128
+  cache_key="$(echo "${hash_array}")"
+
   cache_file="${cache_dir}/${cache_key}"
 
   if [ -f "${cache_file}" ]; then
     cat "${cache_file}"
   else
-    "${@}" | tee "${cache_file}"
+    stdbuf --output=L "${@}" | tee "${cache_file}"
   fi
 }
