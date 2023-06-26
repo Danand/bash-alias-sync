@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# TODO: fix.
 function path-edit() {
   local tmp
   tmp="$(mktemp)"
@@ -171,4 +172,29 @@ function remember() {
   else
     stdbuf --output=L "${@}" | tee "${cache_file}"
   fi
+}
+
+function where() {
+  local condition
+
+  if [ $# -eq 1 ]; then
+    condition="$1"
+  else
+    echo "Invalid number of arguments" 1>&2
+    return 1;
+  fi
+
+  column_index="$(echo "${condition}" | grep -Po "%(\K\d*)")"
+
+  while read -r row; do
+    # shellcheck disable=SC2086
+    value=$(echo "${row}" | cut -d $'\t' -f $column_index)
+
+    subst_condition="${condition/"%$column_index"/$value}"
+
+    # shellcheck disable=SC1072,SC1073,SC1009
+    if [ $subst_condition ]; then
+      echo "${row}"
+    fi
+  done
 }
