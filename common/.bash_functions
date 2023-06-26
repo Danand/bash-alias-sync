@@ -192,7 +192,7 @@ function where() {
 
     subst_condition="${condition/"%$column_index"/$value}"
 
-    # shellcheck disable=SC1072,SC1073,SC1009
+    # shellcheck disable=SC2086
     if [ $subst_condition ]; then
       echo "${row}"
     fi
@@ -200,5 +200,6 @@ function where() {
 }
 
 function prompt-apply-mingw-like() {
+  # shellcheck disable=SC2025
   PS1='\n\033[32m`whoami`\033[0m@\033[34m`uname -n`\033[0m:`pwd`\033[36m`__git_ps1`\033[0m\n$ '
 }

@@ -190,6 +190,22 @@ function venv-init() {
   fi
 }
 
+function uniq-unsorted() {
+  local index=0
+
+  while read -r entry; do
+    echo -e "$((index=index+1))\t${entry}"
+  done \
+  | sort \
+    --uniq \
+    -k 2 \
+  | sort \
+    -k 1 \
+    -n \
+  | cut \
+    -f 2
+}
+
 function recall() {
   local entry
 
@@ -197,6 +213,7 @@ function recall() {
   entry="$( \
     builtin history -w "/dev/stdout" \
     | tac <(cat) \
+    | uniq-ordered \
     | fzf \
   )"
 
