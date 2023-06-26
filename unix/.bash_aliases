@@ -1,10 +1,5 @@
 #!/bin/bash
 
-alias adb-stream='adb exec-out screenrecord --output-format=h264 - | ffplay -y 960 -framerate 60 -probesize 32 -sync video -'
-alias adb-install-fzf='find . -type f -name "*.apk" | fzf | adb install -r "$(cat)"'
-alias adb-logcat-fzf='adb shell "pm list packages" | cut -d ":" -f 2 | fzf | adb shell "pidof $(cat)" | adb logcat --pid="$(cat)"'
-alias adb-sensor-ls='adb shell dumpsys sensorservice | grep android\.sensor | cut -d "|" -f 4 | cut -d "." -f 3 | cut -d "(" -f 1 | sort --uniq'
-
 alias mongod-default='mongod --dbpath /var/lib/mongo --logpath /var/log/mongodb/mongod.log --fork'
 
 alias docker-prune='yes | docker system prune -a --force'
