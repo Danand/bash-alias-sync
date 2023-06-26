@@ -189,3 +189,20 @@ function venv-init() {
     pip install -r "${requirements}"
   fi
 }
+
+function recall() {
+  local entry
+
+  # shellcheck disable=SC2002
+  entry="$( \
+    builtin history -w "/dev/stdout" \
+    | tac <(cat) \
+    | fzf \
+  )"
+
+  read -i "${entry}" -er input
+
+  # shellcheck disable=SC2154
+  eval "${input}" \
+  && builtin history -s "${input}"
+}

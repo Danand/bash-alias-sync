@@ -198,3 +198,7 @@ function where() {
     fi
   done
 }
+
+function prompt-apply-mingw-like() {
+  PS1='\n\033[32m`whoami`\033[0m@\033[34m`uname -n`\033[0m:`pwd`\033[36m`__git_ps1`\033[0m\n$ '
+}
