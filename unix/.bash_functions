@@ -148,6 +148,43 @@ function git-checkout-file-fzf() {
   git checkout "${selected_branch}" -- "${selected_file}"
 }
 
+function git-conflict-resolve-fzf() {
+  local file
+
+  file="$( \
+    git diff \
+      --name-only \
+      --diff-filter="U" \
+    | fzf \
+  )"
+
+  if [ -z "${file}" ]; then
+    return 1
+  fi
+
+  local option
+
+  # shellcheck disable=SC2046
+  option="$(
+    echo -e "theirs\nours\nmergetool" \
+    | fzf \
+  )"
+
+  # shellcheck disable=SC2154
+  if [ -z "${option}" ]; then
+    return 1
+  fi
+
+  if [ "${option}" == "mergetool" ]; then
+    git mergetool "${file}"
+  else
+    # shellcheck disable=SC2086
+    git checkout --$option "${file}"
+  fi
+
+  git add "${file}"
+}
+
 function docker-compose-logs() {
   docker-compose "$@" logs --follow --timestamps
 }
