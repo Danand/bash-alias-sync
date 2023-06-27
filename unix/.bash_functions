@@ -100,9 +100,10 @@ function git-checkout-fzf() {
     return 0
   fi
 
-  git checkout "${@:2}" "${selected_branch}"
-
-  git submodule update
+  git checkout \
+    --force \
+    --recurse-submodules \
+    "${selected_branch}"
 }
 
 function git-checkout-file-fzf() {
@@ -250,7 +251,7 @@ function recall() {
   entry="$( \
     builtin history -w "/dev/stdout" \
     | tac <(cat) \
-    | uniq-ordered \
+    | uniq-unsorted \
     | fzf \
   )"
 
