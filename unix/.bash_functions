@@ -79,6 +79,15 @@ function git-rebase-current-branch-fzf() {
   git checkout "${ours_branch}"
 }
 
+function git-rebase-from-rev-fzf() {
+  git log --oneline \
+  | fzf \
+  | cut -d " " -f 1 \
+  | git rev-list --count "$(cat)..HEAD" \
+  | echo $(($(cat) + 1)) \
+  | git rebase -i --autostash "HEAD~$(cat)"
+}
+
 function git-checkout-fzf() {
   local pattern="$1"
 

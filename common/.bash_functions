@@ -203,3 +203,32 @@ function prompt-apply-mingw-like() {
   # shellcheck disable=SC2025
   PS1='\n\033[32m`whoami`\033[0m@\033[34m`uname -n`\033[0m:`pwd`\033[36m`__git_ps1`\033[0m\n$ '
 }
+
+function grep-errors() {
+  cat | grep \
+    -ie "warn" \
+    -ie "err" \
+    -ie "issue" \
+    -ie "fail" \
+    -ie "disable" \
+    -ie "unable" \
+    -ie "stop" \
+    -ie "interrupt" \
+    -ie "miss" \
+    -ie "problem" \
+    -ie "fault" \
+    -ie "bug" \
+    -ie "crash" \
+    -ie "flaw" \
+    -ie "incompat" \
+    -ie "mismatch" \
+    -ie "break" \
+    -ie "broken" \
+    -ie "corrupt" \
+    -ie "exception" \
+    -ie "abrupt" \
+    -ie "ineffective" \
+    -ie "malfunction" \
+    -ie "mistake" \
+    -ie "defect"
+}
