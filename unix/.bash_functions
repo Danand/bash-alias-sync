@@ -195,6 +195,22 @@ function git-conflict-resolve-fzf() {
   git add "${file}"
 }
 
+function git-commit-hours() {
+  local hours="$1"
+
+  shift
+
+  local date_format="%Y-%m-%d %H:%M:%S"
+
+  local target_date
+
+  target_date="$(date --date="${hours} hours" +"${date_format}")"
+
+  GIT_AUTHOR_DATE="${target_date}" \
+  GIT_COMMITTER_DATE="${target_date}" \
+  git commit "$@"
+}
+
 function docker-compose-logs() {
   docker-compose "$@" logs --follow --timestamps
 }
