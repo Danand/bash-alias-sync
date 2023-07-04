@@ -321,3 +321,9 @@ function adb-sensor-ls() {
   | cut -d "(" -f 1 \
   | sort --uniq
 }
+
+function ip-local() {
+  ip -4 addr show \
+  | awk '/inet / {print $2}' \
+  | cut -d '/' -f1
+}
