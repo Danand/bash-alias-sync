@@ -1,39 +1,42 @@
 #!/bin/bash
 
-# TODO: fix.
 function path-edit() {
   local tmp
   tmp="$(mktemp)"
 
-  echo "${PATH}" | tr ":" "\n" > "${tmp}"
+  echo "${PATH}" | tr ":" "\n" | uniq-unsorted > "${tmp}"
   code --new-window --wait "${tmp}"
 
   PATH="$(tr "\n" ":" < "${tmp}")"
   export PATH
 
-  readarray -t paths < "${tmp}"
-
-  target_file="${HOME}/.bash_path"
-
-  if [ ! -f "${target_file}" ]; then
-    target_file="${HOME}/.bashrc"
-  fi
-
-  content="$(grep -v -E ".*export PATH=.*" "${target_file}")"
-
-  echo "${content}" > "${target_file}"
-
-  for path in ${paths[@]}; do
-    echo -n 'export PATH="' >> target_file
-    echo -n "${path}"
-    echo -n ':$PATH"'
-  done
-
   rm -f "${tmp}"
+
+  # TODO: Add proper saving `export PATH` to file.
+
+  local target_file="${HOME}/.bash_path" # My personal choice to store the PATH.
+
+  echo '#!/bin/bash' > "${target_file}"
+  echo >> "${target_file}"
+  echo >> 'unset PATH'
+
+  echo "${PATH}" \
+  | while read -d ":" -r dir; do
+      if echo "${dir}" | grep -q '^\s*$'; then
+        continue
+      fi
+
+      # Add replacing home directory with its substitution.
+
+      echo -n 'export PATH="' >> "${target_file}"
+      echo -n "${dir}" >> "${target_file}"
+      echo ':${PATH}"' >> "${target_file}"
+    done
+
+  echo >> 'unset PATH'
 }
 
 function git-chmod() {
-  file_mode_enabled="$(git config --get core.fileMode)"
   git config core.fileMode true
 
   local mod="$1"
@@ -48,12 +51,6 @@ function git-chmod() {
     || git add --chmod="${mod}" "${path}" > /dev/null 2>&1
   done
   unset IFS
-
-  if [ -z "${file_mode_enabled}" ]; then
-    git config --unset core.fileMode
-  else
-    git config core.fileMode "${file_mode_enabled}"
-  fi
 }
 
 function git-branch-first-commit() {
@@ -97,11 +94,28 @@ function git-bump() {
 }
 
 function git-repo-ls {
-  find . -maxdepth 2 -type d -name ".git" -print0 | xargs -0 -I git_dir $SHELL -c 'dirname git_dir'
+  find \
+    . \
+    -maxdepth 2 \
+    -type d \
+    -name ".git" \
+  | while read -r git_dir; do
+      dirname "${git_dir}"
+    done
 }
 
 function git-repo-rm-fzf {
-  git-repo-ls | fzf | rm -rf $(cat)
+  local repo
+  repo="$(git-repo-ls | fzf)"
+
+  rm -rf "${repo}"
+}
+
+function git-repo-cd-fzf {
+  local repo
+  repo="$(git-repo-ls | fzf)"
+
+  cd "${repo}"
 }
 
 function measure() {
@@ -126,8 +140,8 @@ function history-trim() {
 }
 
 function remember() {
-  cache_dir_root="/tmp/cache-remember"
-  cache_dir="${cache_dir_root}/$$"
+  local cache_dir_root="/tmp/cache-remember"
+  local cache_dir="${cache_dir_root}/$$"
 
   if [ "$1" == "--forget" ]; then
     rm -rf "${cache_dir}"
@@ -145,7 +159,7 @@ function remember() {
 
   mkdir -p "${cache_dir}"
 
-  hash_data="${*}"
+  local hash_data="${*}"
 
   git rev-parse HEAD > /dev/null 2>&1 || eval is_in_repo=$? && true
 
@@ -158,13 +172,18 @@ function remember() {
     hash_data+="$(pwd)"
   fi
 
+  local hash_array
+
   # shellcheck disable=SC2207
   hash_array=($(echo "${hash_data}" | md5sum))
+
+  local cache_key
 
   # shellcheck disable=SC2116
   # shellcheck disable=SC2128
   cache_key="$(echo "${hash_array}")"
 
+  local cache_file
   cache_file="${cache_dir}/${cache_key}"
 
   if [ -f "${cache_file}" ]; then
@@ -172,31 +191,6 @@ function remember() {
   else
     stdbuf --output=L "${@}" | tee "${cache_file}"
   fi
-}
-
-function where() {
-  local condition
-
-  if [ $# -eq 1 ]; then
-    condition="$1"
-  else
-    echo "Invalid number of arguments" 1>&2
-    return 1;
-  fi
-
-  column_index="$(echo "${condition}" | grep -Po "%(\K\d*)")"
-
-  while read -r row; do
-    # shellcheck disable=SC2086
-    value=$(echo "${row}" | cut -d $'\t' -f $column_index)
-
-    subst_condition="${condition/"%$column_index"/$value}"
-
-    # shellcheck disable=SC2086
-    if [ $subst_condition ]; then
-      echo "${row}"
-    fi
-  done
 }
 
 function prompt-apply-mingw-like() {
