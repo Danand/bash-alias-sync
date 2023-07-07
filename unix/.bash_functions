@@ -298,11 +298,24 @@ function recall() {
     | fzf \
   )"
 
-  read -i "${entry}" -er input
+  builtin history -s "recall"
+
+  if [ -z "${entry}" ]; then
+    return 0
+  fi
+
+  read \
+    -er \
+    -i "${entry}" \
+    -p "${PS1@P}" \
+    input
 
   # shellcheck disable=SC2154
   eval "${input}" \
   && builtin history -s "${input}"
+
+  builtin history -w
+  builtin history -n
 }
 
 function adb-stream() {
