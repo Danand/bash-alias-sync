@@ -1,19 +1,25 @@
 #!/bin/bash
 
 function rg-fzf() {
-  local results="$(rg "$1" --files-without-match)"
+  local results
+   results="$(rg "$1" --files-without-match)"
+
   echo "${results}" | sort --uniq | fzf
 }
 
 function find-fzf() {
-  local results="$(find "$@")"
+  local results
+  results="$(find "$@")"
+
   echo "${results}" | sort --uniq | fzf
 }
 
 function git-history-fzf() {
   local path="$1"
 
-  local commit=$(git log --format="%h^%s^%aN" --full-diff -- "${path}" | column -t -s "^" | fzf | cut -d " " -f 1)
+  local commit
+
+  commit=$(git log --format="%h^%s^%aN" --full-diff -- "${path}" | column -t -s "^" | fzf | cut -d " " -f 1)
 
   echo -e "\nShow diff for commit ${commit}\n\n"
 
@@ -27,15 +33,9 @@ function git-cd-submodule-fzf() {
 }
 
 function git-merge-fzf() {
-  local pattern="$1"
-
   local branches
 
-  if [ -z "${pattern}" ]; then
-    branches="$(git branch -r --format="%(refname:short)")"
-  else
-    branches="$(git branch -r --format="%(refname:short)" | grep "${pattern}")"
-  fi
+  branches="$(git branch -r --format="%(refname:short)")"
 
   if [ -z "${branches}" ]; then
     return 0
@@ -51,28 +51,27 @@ function git-merge-fzf() {
 }
 
 function git-rebase-current-branch-fzf() {
-  local pattern="$1"
-
   local branches
 
-  if [ -z "${pattern}" ]; then
-    branches="$(git branch --format="%(refname:short)")"
-  else
-    branches="$(git branch --format="%(refname:short)" | grep "${pattern}")"
-  fi
+  branches="$(git branch --format="%(refname:short)")"
 
   if [ -z "${branches}" ]; then
     return 0
   fi
 
-  local selected_branch="$(echo "${branches}" | fzf)"
+  local selected_branch
+
+  selected_branch="$(echo "${branches}" | fzf)"
 
   if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
     return 0
   fi
 
-  local ours_branch="$(git branch --show-current)"
-  local ours_first_commit=$(git-branch-first-commit)
+  local ours_branch
+  ours_branch="$(git branch --show-current)"
+
+  local ours_first_commit
+  ours_first_commit=$(git-branch-first-commit)
 
   git rebase -i --autostash --onto "${selected_branch}" "${ours_first_commit}^" "HEAD"
   git update-ref "refs/heads/${ours_branch}" HEAD
@@ -89,21 +88,40 @@ function git-rebase-from-rev-fzf() {
 }
 
 function git-checkout-fzf() {
-  local pattern="$1"
-
   local branches
 
-  if [ -z "${pattern}" ]; then
-    branches="$(git branch --format="%(refname:short)")"
-  else
-    branches="$(git branch --format="%(refname:short)" | grep "${pattern}")"
-  fi
+  branches="$(git branch --format="%(refname:short)")"
 
   if [ -z "${branches}" ]; then
     return 0
   fi
 
-  local selected_branch="$(echo "${branches}" | fzf)"
+  local selected_branch
+
+  selected_branch="$(echo "${branches}" | fzf)"
+
+  if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
+    return 0
+  fi
+
+  git checkout \
+    --force \
+    --recurse-submodules \
+    "${selected_branch}"
+}
+
+function git-checkout-remote-fzf() {
+  local branches
+
+  branches="$(git branch --remote --format="%(refname:short)" | cut -d "/" -f 2-)"
+
+  if [ -z "${branches}" ]; then
+    return 0
+  fi
+
+  local selected_branch
+
+  selected_branch="$(echo "${branches}" | fzf)"
 
   if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
     return 0
@@ -116,21 +134,17 @@ function git-checkout-fzf() {
 }
 
 function git-checkout-file-fzf() {
-  local pattern="$1"
-
   local branches
 
-  if [ -z "${pattern}" ]; then
-    branches="$(git branch -r --format="%(refname:short)")"
-  else
-    branches="$(git branch -r --format="%(refname:short)" | grep "${pattern}")"
-  fi
+  branches="$(git branch -r --format="%(refname:short)")"
 
   if [ -z "${branches}" ]; then
     return 0
   fi
 
-  local selected_branch="$(echo "${branches}" | fzf)"
+  local selected_branch
+
+  selected_branch="$(echo "${branches}" | fzf)"
 
   if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
     return 0
@@ -140,10 +154,14 @@ function git-checkout-file-fzf() {
   local selected_dir="."
 
   while [ -z "${selected_file}" ]; do
-    local selected_item="$(git ls-tree --format="%(objecttype)%x09%(path)" "${selected_branch}" "${selected_dir}/" | fzf)"
+    local selected_item
+    selected_item="$(git ls-tree --format="%(objecttype)%x09%(path)" "${selected_branch}" "${selected_dir}/" | fzf)"
 
-    local selected_item_type=$(echo "${selected_item}" | cut -f 1)
-    local selected_item_name=$(echo "${selected_item}" | cut -f 2)
+    local selected_item_type
+    selected_item_type=$(echo "${selected_item}" | cut -f 1)
+
+    local selected_item_name
+    selected_item_name=$(echo "${selected_item}" | cut -f 2)
 
     if [ "${selected_item_type}" == "blob" ]; then
       selected_file="${selected_item_name}"
