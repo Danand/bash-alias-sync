@@ -194,8 +194,11 @@ function remember() {
 }
 
 function prompt-apply-mingw-like() {
-  # shellcheck disable=SC2025
-  PS1='\n\033[32m`whoami`\033[0m@\033[34m`uname -n`\033[0m:`pwd`\033[36m`__git_ps1`\033[0m\n$ '
+  PS1='\n\[\033[1m\]\[\033[32m\]`whoami`\[\033[0m\]@\[\033[34m\]`uname -n`\[\033[0m\]:`pwd`\[\033[36m\]`__git_ps1`\[\033[0m\]\[\033[0m\]\n$ '
+}
+
+function prompt-apply-with-date() {
+  PS1='\n\[\033[1m\]\[\033[32m\]`whoami`\[\033[0m\]@\[\033[34m\]`uname -n`\[\033[0m\]:`pwd` \[\033[0;34m\]`date +"%Y-%m-%d %H-%M-%S"`\[\033[0m\] \$ '
 }
 
 function grep-errors() {
