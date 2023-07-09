@@ -5,7 +5,32 @@ function path-edit() {
   tmp="$(mktemp)"
 
   echo "${PATH}" | tr ":" "\n" | uniq-unsorted > "${tmp}"
-  code --new-window --wait "${tmp}"
+
+  read -rp "Now, press ENTER and choose editor"
+
+  local chosen_editor
+
+  chosen_editor="$( \
+    ( \
+      echo "nano"; \
+      echo "code"; \
+      echo "vi"; \
+    ) \
+    | fzf \
+  )"
+
+  if [ "${chosen_editor}" == "code" ]; then
+    code --new-window --wait "${tmp}"
+  elif [ "${chosen_editor}" == "nano" ]; then
+    nano "${tmp}"
+  elif [ "${chosen_editor}" == "vi" ]; then
+    vi "${tmp}"
+  elif [ -z "${chosen_editor}" ]; then
+    return 0
+  else
+    echo "Unknown editor chosen: ${chosen_editor}" 1>&2
+    return 1
+  fi
 
   PATH="$(tr "\n" ":" < "${tmp}")"
   export PATH
