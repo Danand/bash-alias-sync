@@ -1,0 +1,24 @@
+#!/bin/bash
+
+function __try_install_via_winget() {
+  local package="$1"
+
+  winget \
+    list \
+    --disable-interactivity \
+    --name="${package}"
+
+  local is_installed="$?"
+
+  if [ "${is_installed}" != "0" ]; then
+    winget \
+      install \
+      --disable-interactivity \
+      "${package}"
+  fi
+}
+
+__try_install_via_winget "BurntSushi.ripgrep.MSVC"
+__try_install_via_winget "fzf"
+
+unset -f __try_install_via_winget

@@ -1,0 +1,49 @@
+#!/bin/bash
+
+function paste() {
+  powershell.exe -command "Get-Clipboard"
+}
+
+function clip()
+{
+  clip.exe
+}
+
+function cmd() {
+  cmd.exe "$@"
+}
+
+function git() {
+  git.exe "$@"
+}
+
+function code() {
+  local path
+
+  if [ -z "$1" ]; then
+    path="$(cat)"
+  else
+    path="$1"
+  fi
+
+  wait
+
+  local win_path
+  win_path=$(wslpath -w "${path}")
+
+  cmd.exe /c code "${win_path}" --new-window 2>/dev/null
+}
+
+function explorer() {
+  local win_path
+  win_path=$(wslpath -w "$1")
+
+  explorer "${win_path}"
+}
+
+function rider() {
+  local win_path
+  win_path=$(wslpath -w "$1")
+
+  rider64.exe "${win_path}" &
+}

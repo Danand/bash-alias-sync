@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Loads aliases to add into `~/.bashrc` or `~/.bash_profile`.
+# Loads aliases for adding into `~/.bashrc` or `~/.bash_profile`.
 
 # CONSTANTS
 
@@ -62,6 +62,16 @@ function __apply_aliases() {
 
   # shellcheck source=/dev/null
   source "${BASH_ALIAS_SYNC_REPO}/$1/.bash_constants"
+
+  # shellcheck source=/dev/null
+  source "${BASH_ALIAS_SYNC_REPO}/$1/.bash_overrides"
+
+  local deps_lock_file="${BASH_ALIAS_SYNC_REPO}/$1/.bash_deps.lock"
+
+  if [ ! -f "${deps_lock_file}" ]; then
+    source "${BASH_ALIAS_SYNC_REPO}/$1/.bash_deps"
+    touch "${deps_lock_file}"
+  fi
 }
 
 # EXECUTION
@@ -85,6 +95,10 @@ __apply_aliases "unix"
 if [[ "${OSTYPE}" == "darwin"* ]]; then
   __apply_aliases "macos"
 elif [[ "${OSTYPE}" == "linux"* ]]; then
+  if [ -f "${BASH_PATH_FILE}" ]; then
+    source "${BASH_PATH_FILE}"
+  fi
+
   __apply_aliases "linux"
 fi
 

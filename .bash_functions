@@ -15,7 +15,7 @@ function alias-update() {
 }
 
 function alias-pull() {
-  pushd "$BASH_ALIAS_SYNC_REPO" > /dev/null || return 2
+  pushd "${BASH_ALIAS_SYNC_REPO}" > /dev/null || return 2
 
   git pull --rebase --autostash
   alias-update
@@ -24,7 +24,7 @@ function alias-pull() {
 }
 
 function alias-push() {
-  pushd "$BASH_ALIAS_SYNC_REPO" > /dev/null || return 2
+  pushd "${BASH_ALIAS_SYNC_REPO}" > /dev/null || return 2
 
   git pull --rebase --autostash
   git add -A
@@ -37,12 +37,22 @@ function alias-push() {
 }
 
 function alias-reset() {
-  pushd "$BASH_ALIAS_SYNC_REPO" > /dev/null || return 2
+  pushd "${BASH_ALIAS_SYNC_REPO}" > /dev/null || return 2
 
   git reset --hard
   git clean -fd
 
   alias-update
 
+  popd > /dev/null || return 2
+}
+
+function alias-edit() {
+  code "${BASH_ALIAS_SYNC_REPO}" --new-window
+}
+
+function alias-deps-lock-rm() {
+  pushd "${BASH_ALIAS_SYNC_REPO}" > /dev/null || return 2
+  git clean -fdx "**/.bash_deps.lock"
   popd > /dev/null || return 2
 }

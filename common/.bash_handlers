@@ -5,7 +5,11 @@
 function non-existent-command-trap() {
   if [ "$?" == "127" ]; then
     echo "Let's pretend we did not see that..."
-    local history_last_line_number="$(builtin history | tail -n 1 | grep -Po "^\s*(\K\d*)\s*")"
+
+    local history_last_line_number
+
+    history_last_line_number="$(builtin history | tail -n 1 | grep -Po "^\s*(\K\d*)\s*")"
+
     builtin history -d "${history_last_line_number}"
     builtin history -r
   fi
@@ -20,15 +24,15 @@ HISTFILESIZE=$HISTSIZE
 HISTCONTROL=ignorespace:ignoredups
 
 function __bash_history_sync() {
-    builtin history -a
-    HISTFILESIZE=$HISTSIZE
-    builtin history -c
-    builtin history -r
+  builtin history -a
+  HISTFILESIZE=$HISTSIZE
+  builtin history -c
+  builtin history -r
 }
 
 history() {
-    __bash_history_sync
-    builtin history "$@"
+  __bash_history_sync
+  builtin history "$@"
 }
 
 PROMPT_COMMAND=__bash_history_sync

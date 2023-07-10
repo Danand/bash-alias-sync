@@ -2,9 +2,6 @@
 
 # shellcheck disable=SC2139
 
-alias alias-edit="code \"${BASH_ALIAS_SYNC_REPO}\" --new-window"
-
-alias git-fetch='git fetch --all && git submodule foreach git fetch --all'
 alias git-cd-superproject='cd "$(git rev-parse --show-superproject-working-tree)"'
 
 alias path-ls='echo $PATH | tr ":" "\n"'

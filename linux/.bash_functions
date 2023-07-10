@@ -1,13 +1,21 @@
 #!/bin/bash
 
 function rg-fzf() {
-  local results="$(rg "$1" --files-without-match)"
-  echo "${results}" | sort --uniq | fzf
+  local results
+  results="$(rg "$1" --files-without-match)"
+
+  echo "${results}" \
+  | sort --uniq \
+  | fzf
 }
 
 function find-fzf() {
-  local results="$(find "$@")"
-  echo "${results}" | sort --uniq | fzf
+  local results
+  results="$(find "$@")"
+
+  echo "${results}" \
+  | sort --uniq \
+  | fzf
 }
 
 function code-new() {
@@ -17,6 +25,8 @@ function code-new() {
 
 function openvpn-profile() {
   rm -f "/etc/openvpn/client.conf"
+
+  # shellcheck disable=SC2012
   ls -1 /etc/openvpn/*.conf | fzf | cp "$(cat)" "/etc/openvpn/client.conf"
 }
 
@@ -58,7 +68,7 @@ function ipinfo() {
 }
 
 function doctl-ssh() {
-  doctl compute ssh "$(\
+  doctl compute ssh "$( \
     doctl compute droplet list \
       --format="ID,Name,PublicIPv4,Region,Image" \
       --no-header \
@@ -69,27 +79,32 @@ function doctl-ssh() {
 }
 
 function doctl-update-hosts() {
-  local droplet_ips="$(\
+  local droplet_ips
+
+  droplet_ips="$( \
     doctl compute droplet list \
       --format="PublicIPv4,Name" \
       --no-header \
-    | tr -s " "\
+    | tr -s " " \
   )"
 
-  local clear_from="$(sudo grep -n "DigitalOcean.*begin" /etc/hosts | cut -d ":" -f 1)"
-  local clear_to="$(sudo grep -n "DigitalOcean.*end" /etc/hosts | cut -d ":" -f 1)"
+  local clear_from
+  clear_from="$(sudo grep -n "DigitalOcean.*begin" /etc/hosts | cut -d ":" -f 1)"
+
+  local clear_to
+  clear_to="$(sudo grep -n "DigitalOcean.*end" /etc/hosts | cut -d ":" -f 1)"
 
   if [ -n "${clear_from}" ] && [ -n "${clear_to}" ]; then
     sudo sed -i "${clear_from},${clear_to}d" /etc/hosts
   fi
 
-  sudo ${SHELL} -c "echo \"# ===== DigitalOcean Droplets (begin) =====\" >> /etc/hosts"
+  sudo "${SHELL}" -c "echo \"# ===== DigitalOcean Droplets (begin) =====\" >> /etc/hosts"
 
   for droplet_ip in ${droplet_ips}; do
-    sudo ${SHELL} -c "echo \"${droplet_ip}\" >> /etc/hosts"
+    sudo "${SHELL}" -c "echo \"${droplet_ip}\" >> /etc/hosts"
   done
 
-  sudo ${SHELL} -c "echo \"# ===== DigitalOcean Droplets (end) =====\" >> /etc/hosts"
+  sudo "${SHELL}" -c "echo \"# ===== DigitalOcean Droplets (end) =====\" >> /etc/hosts"
 }
 
 function detect-package-manager() {
@@ -124,10 +139,12 @@ function port-ls-busy() {
   | awk '{if ($1 != 1) print $2}'
 }
 
+# shellcheck disable=SC2046
+# shellcheck disable=SC2003
 function next() {
   wmctrl -n $(expr $(wmctrl -d | wc -l) + 1)
-  wmctrl -s $(expr $(wmctrl -d | grep "*" | cut -d " " -f 1) + 1)
-  $@
+  wmctrl -s $(expr $(wmctrl -d | grep "\*" | cut -d " " -f 1) + 1)
+  "$@"
 }
 
 function apport-enable() {
@@ -196,4 +213,79 @@ function apport-unpack-fzf() {
 
   rm -rf "${unpack_dir}"
   rm -f "${gdb_commands}"
+}
+
+# shellcheck disable=SC2129
+# shellcheck disable=SC2016
+function path-edit() {
+  local tmp
+  tmp="$(mktemp)"
+
+  echo "${PATH}" \
+  | tr ":" "\n" \
+  | uniq-unsorted \
+  | while read -r dir; do
+      echo "${dir/$HOME/'${HOME}'}"
+    done \
+  > "${tmp}"
+
+  local chosen_editor
+
+  chosen_editor="$( \
+    ( \
+      echo "nano"; \
+      echo "code"; \
+      echo "vi"; \
+    ) \
+    | fzf --header="↑ CHOOSE EDITOR ↑" \
+  )"
+
+  if [ "${chosen_editor}" == "code" ]; then
+    code --new-window --wait "${tmp}"
+  elif [ "${chosen_editor}" == "nano" ]; then
+    nano "${tmp}"
+  elif [ "${chosen_editor}" == "vi" ]; then
+    vi "${tmp}"
+  elif [ -z "${chosen_editor}" ]; then
+    return 0
+  else
+    echo "Not supported editor chosen: ${chosen_editor}" 1>&2
+    return 1
+  fi
+
+  PATH="$(echo -n "$(cat "${tmp}")" | tr "\n" ":")"
+  export PATH
+
+  rm -f "${tmp}"
+
+  # My personal choice to store the PATH:
+  local target_file="${HOME}/.bash_path"
+
+  echo '#!/bin/bash' > "${target_file}"
+  echo >> "${target_file}"
+  echo 'unset PATH' >> "${target_file}"
+  echo >> "${target_file}"
+
+  local is_first_path_assigned=false
+
+  echo "${PATH}" \
+  | while read -d ":" -r dir; do
+      if [ ! -d "${dir}" ]; then
+        continue
+      fi
+
+      local dir_subst="${dir/$HOME/'${HOME}'}"
+
+      echo -n 'export PATH="' >> "${target_file}"
+      echo -n "${dir_subst}" >> "${target_file}"
+
+      if $is_first_path_assigned; then
+        echo -n ':${PATH}' >> "${target_file}"
+      else
+        is_first_path_assigned=true
+      fi
+      echo '"' >> "${target_file}"
+    done
+
+  echo "PATH successfully modified"
 }

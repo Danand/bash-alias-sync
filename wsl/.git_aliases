@@ -1,5 +1,5 @@
 #!/bin/bash
 
-$(which git) config --global core.editor 'codew --new-window --wait'
-$(which git) config --global diff.tool 'riderw'
-$(which git) config --global merge.tool 'riderw'
+$(which git) config --global core.editor 'code --new-window --wait'
+$(which git) config --global diff.tool 'rider'
+$(which git) config --global merge.tool 'rider'
