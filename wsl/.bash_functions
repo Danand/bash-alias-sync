@@ -29,7 +29,7 @@ function code-touch() {
 }
 
 function ssh-keygen-wsl() {
-  ssh-keygen -q -t rsa -N '' -f "$HOME/.ssh/$1" <<<y > /dev/null
+  ssh-keygen -q -t rsa -N '' -f "${HOME}/.ssh/$1" <<<y > /dev/null
 
   local user_profile_win
   user_profile_win="$(wslvar USERPROFILE)"
@@ -37,6 +37,6 @@ function ssh-keygen-wsl() {
   local user_profile_wsl
   user_profile_wsl="$(wslpath "${user_profile_win}")"
 
-  cp -f "$HOME/.ssh/$1" "${user_profile_wsl}/.ssh/$1"
-  cp -f "$HOME/.ssh/$1.pub" "${user_profile_wsl}/.ssh/$1.pub"
+  cp -f "${HOME}/.ssh/$1" "${user_profile_wsl}/.ssh/$1"
+  cp -f "${HOME}/.ssh/$1.pub" "${user_profile_wsl}/.ssh/$1.pub"
 }

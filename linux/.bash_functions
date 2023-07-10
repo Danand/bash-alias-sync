@@ -224,9 +224,6 @@ function path-edit() {
   echo "${PATH}" \
   | tr ":" "\n" \
   | uniq-unsorted \
-  | while read -r dir; do
-      echo "${dir/$HOME/'${HOME}'}"
-    done \
   > "${tmp}"
 
   local chosen_editor
@@ -274,7 +271,7 @@ function path-edit() {
         continue
       fi
 
-      local dir_subst="${dir/$HOME/'${HOME}'}"
+      local dir_subst="${dir/${HOME}/'${HOME}'}"
 
       echo -n 'export PATH="' >> "${target_file}"
       echo -n "${dir_subst}" >> "${target_file}"

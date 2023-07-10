@@ -5,10 +5,10 @@
 
 git clean -fdx "**/.bash_deps.lock"
 
-if [ -f "$HOME/.bash_profile" ]; then
-  profile_path="$HOME/.bash_profile"
+if [ -f "${HOME}/.bash_profile" ]; then
+  profile_path="${HOME}/.bash_profile"
 else
-  profile_path="$HOME/.bash_aliases"
+  profile_path="${HOME}/.bash_aliases"
 fi
 
 repo_dir=$(realpath -- "$(dirname -- "$0")")

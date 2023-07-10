@@ -4,7 +4,7 @@
 
 alias git-cd-superproject='cd "$(git rev-parse --show-superproject-working-tree)"'
 
-alias path-ls='echo $PATH | tr ":" "\n"'
+alias path-ls='echo ${PATH} | tr ":" "\n"'
 alias col-first='echo "$(cat)" | cut -d " " -f 1'
 alias untar='tar -zxvf'
 
