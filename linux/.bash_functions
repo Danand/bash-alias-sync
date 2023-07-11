@@ -218,6 +218,8 @@ function apport-unpack-fzf() {
 # shellcheck disable=SC2129
 # shellcheck disable=SC2016
 function path-edit() {
+  local path_before="${PATH}"
+
   local tmp
   tmp="$(mktemp)"
 
@@ -234,7 +236,11 @@ function path-edit() {
       echo "code"; \
       echo "vi"; \
     ) \
-    | fzf --header="↑ CHOOSE EDITOR ↑" \
+    | fzf \
+        --header="Choose editor:" \
+        --layout="reverse" \
+        --no-sort \
+        --height="25%" \
   )"
 
   if [ "${chosen_editor}" == "code" ]; then
@@ -284,5 +290,13 @@ function path-edit() {
       echo '"' >> "${target_file}"
     done
 
-  echo "PATH successfully modified"
+  echo
+  echo "PATH modified:"
+  echo
+  diff \
+    --side-by-side \
+    --color="always"  \
+    <(echo "${path_before}" | tr ":" "\n" | sort --uniq) \
+    <(echo "${PATH}" | tr ":" "\n" | sort --uniq)
+  echo
 }

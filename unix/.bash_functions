@@ -290,12 +290,20 @@ function uniq-unsorted() {
 function recall() {
   local entry
 
+  builtin history -a
+  builtin history -w
+
   # shellcheck disable=SC2002
   entry="$( \
     builtin history -w "/dev/stdout" \
-    | tac <(cat) \
+    | cat \
     | uniq-unsorted \
     | fzf \
+      --tac \
+      --header="Pick line from history:" \
+      --layout="reverse" \
+      --no-sort \
+      --height="33%" \
   )"
 
   builtin history -s "recall"
