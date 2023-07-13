@@ -352,6 +352,27 @@ function adb-logcat-fzf() {
   | adb logcat --pid="$(cat)"
 }
 
+function adb-connect-fzf() {
+  adb tcpip "${ADB_PORT}"
+
+  route -n | grep '^0.0.0.0' | awk '{print $2}' \
+  | while read -r gateway; do
+      sudo nmap \
+        -p "${ADB_PORT}" \
+        --open \
+        -v \
+        -sn "${gateway}/24" \
+      | grep "scan report" \
+      | awk '{print $5}'
+    done \
+  | fzf \
+    --header="Choose device address:" \
+    --layout="reverse" \
+    --no-sort \
+    --height="25%" \
+  | adb connect "$(cat)"
+}
+
 function adb-sensor-ls() {
   adb shell dumpsys sensorservice \
   | grep "android\.sensor" \

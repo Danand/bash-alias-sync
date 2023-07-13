@@ -1,1 +1,3 @@
 #!/bin/bash
+
+export ADB_PORT=5555
