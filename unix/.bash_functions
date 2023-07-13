@@ -352,27 +352,6 @@ function adb-logcat-fzf() {
   | adb logcat --pid="$(cat)"
 }
 
-function adb-connect-fzf() {
-  adb tcpip "${ADB_PORT}"
-
-  route -n | grep '^0.0.0.0' | awk '{print $2}' \
-  | while read -r gateway; do
-      sudo nmap \
-        -p "${ADB_PORT}" \
-        --open \
-        -v \
-        -sn "${gateway}/24" \
-      | grep "scan report" \
-      | awk '{print $5}'
-    done \
-  | fzf \
-    --header="Choose device address:" \
-    --layout="reverse" \
-    --no-sort \
-    --height="25%" \
-  | adb connect "$(cat)"
-}
-
 function adb-sensor-ls() {
   adb shell dumpsys sensorservice \
   | grep "android\.sensor" \
@@ -386,4 +365,30 @@ function ip-local() {
   ip -4 addr show \
   | awk '/inet / {print $2}' \
   | cut -d '/' -f1
+}
+
+function __kill_preview() {
+  ps_line="$1"
+  pstree -p "$(echo "${ps_line}" | awk '{print $1}')"
+}
+
+export -f __kill_preview
+
+function kill-fzf() {
+  ps -aex --format $'%p\t%a' \
+  | tail -n +2 \
+  | grep \
+    -v \
+    -e "ps -aex" \
+    -e "tail" \
+    -e "grep" \
+  | column -t \
+  | fzf \
+    --tac \
+    --header="Choose process to kill:" \
+    --layout="reverse" \
+    --no-sort \
+    --preview="__kill_preview {}" \
+    --preview-window 'right:33%' \
+  | kill -9 $(cat | awk '{print $1}')
 }
