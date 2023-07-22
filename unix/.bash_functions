@@ -392,3 +392,14 @@ function kill-fzf() {
     --preview-window 'right:33%' \
   | kill -9 $(cat | awk '{print $1}')
 }
+
+function du-fzf() {
+  while true; do
+    entry="$(du -hs * | sort -rh | fzf --tac)"
+    path="$(echo "${entry}" | cut -f 2-)"
+
+    if [ -d "$(realpath ${path})" ]; then
+      cd "${path}"
+    fi
+  done
+}
