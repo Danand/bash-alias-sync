@@ -5,11 +5,11 @@ import sys
 
 pattern = sys.argv[1]
 
-multiline_string = sys.stdin.read()
+input = sys.stdin.read()
 
 matches = re.finditer(
     pattern,
-    multiline_string,
+    input,
     re.MULTILINE)
 
 for match in matches:
