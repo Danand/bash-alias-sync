@@ -426,7 +426,5 @@ function parse-as-table() {
   fi
 
   echo "${input}" \
-  | python \
-    "${BASH_ALIAS_SYNC_REPO}/python-scripts/parse-as-table.py" \
-    "${pattern}"
+  | "${BASH_ALIAS_SYNC_REPO}/python-scripts/parse-as-table.py" "${pattern}"
 }
