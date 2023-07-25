@@ -398,8 +398,35 @@ function du-fzf() {
     entry="$(du -hs * | sort -rh | fzf --tac)"
     path="$(echo "${entry}" | cut -f 2-)"
 
-    if [ -d "$(realpath ${path})" ]; then
-      cd "${path}"
+    if [ -d "$(realpath "${path}")" ]; then
+      cd "${path}" || return 2
     fi
   done
+}
+
+function parse-as-table() {
+  local pattern="$1"
+
+  local input
+  input="$(timeout 0.1 cat)"
+
+  if [ -z "${input}" ]; then
+    echo "error: stdin is empty" 1>&2
+    return 1
+  fi
+
+  if [ ! $# -eq 1 ]; then
+    echo "error: incorrect number of parameters" 1>&2
+    return 1
+  fi
+
+  if [ -z "${pattern}" ]; then
+    echo "error: given regex pattern is empty" 1>&2
+    return 1
+  fi
+
+  echo "${input}" \
+  | python \
+    "${BASH_ALIAS_SYNC_REPO}/python-scripts/parse-as-table.py" \
+    "${pattern}"
 }
