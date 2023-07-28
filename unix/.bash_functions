@@ -424,17 +424,19 @@ function parse-as-table() {
   | "${BASH_ALIAS_SYNC_REPO}/python-scripts/parse-as-table.py" "${pattern}"
 }
 
-function sum() {
+function cut-math() {
+  local operator="$1"
+
   local tmp_sum
   tmp_sum=$(mktemp -q)
 
   echo "0" > "${tmp_sum}"
 
   cat \
-  | cut "$@" \
+  | cut "${@:2}" \
   | while read -r value; do
       total="$(cat "${tmp_sum}")"
-      result="$(awk "BEGIN {print ${value} + ${total}; exit}")"
+      result="$(awk "BEGIN {print ${value} ${operator} ${total}; exit}")"
 
       echo "${result}" > "${tmp_sum}"
     done
@@ -442,4 +444,24 @@ function sum() {
   cat "${tmp_sum}"
 
   rm -f "${tmp_sum}"
+}
+
+function sum() {
+  cat | cut-math "+" "$@"
+}
+
+function avg() {
+  local table
+  table="$(cat)"
+
+  local total
+  total="$(echo "${table}" | sum "$@")"
+
+  local count
+  count="$(echo "${table}" | wc -l)"
+
+  local result
+  result="$(awk "BEGIN {print ${total} / ${count}; exit}")"
+
+  echo "${result}"
 }
