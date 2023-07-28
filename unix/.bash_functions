@@ -408,12 +408,7 @@ function parse-as-table() {
   local pattern="$1"
 
   local input
-  input="$(timeout 0.1 cat)"
-
-  if [ -z "${input}" ]; then
-    echo "error: stdin is empty" 1>&2
-    return 1
-  fi
+  input="$(cat)"
 
   if [ ! $# -eq 1 ]; then
     echo "error: incorrect number of parameters" 1>&2
@@ -427,4 +422,24 @@ function parse-as-table() {
 
   echo "${input}" \
   | "${BASH_ALIAS_SYNC_REPO}/python-scripts/parse-as-table.py" "${pattern}"
+}
+
+function sum() {
+  local tmp_sum
+  tmp_sum=$(mktemp -q)
+
+  echo "0" > "${tmp_sum}"
+
+  cat \
+  | cut "$@" \
+  | while read -r value; do
+      total="$(cat "${tmp_sum}")"
+      result="$(awk "BEGIN {print ${value} + ${total}; exit}")"
+
+      echo "${result}" > "${tmp_sum}"
+    done
+
+  cat "${tmp_sum}"
+
+  rm -f "${tmp_sum}"
 }
