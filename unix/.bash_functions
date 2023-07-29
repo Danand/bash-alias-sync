@@ -424,6 +424,7 @@ function parse-as-table() {
   | "${BASH_ALIAS_SYNC_REPO}/python-scripts/parse-as-table.py" "${pattern}"
 }
 
+<<<<<<< Updated upstream
 function cut-math() {
   local operator="$1"
 
@@ -464,4 +465,47 @@ function avg() {
   result="$(awk "BEGIN {print ${total} / ${count}; exit}")"
 
   echo "${result}"
+=======
+function gh-runs-rm-fzf() {
+  local repo
+
+  repo="$(\
+    gh repo list \
+      --json "nameWithOwner" \
+      --jq '.[] | .nameWithOwner' \
+    | fzf \
+  )"
+
+  local username
+  username="$(echo "${repo}" | cut -d "/" -f 1)"
+
+  while true; do
+    local run_id
+
+    run_id="$( \
+      gh run list \
+        -R "${repo}" \
+        --limit 100 \
+        --json "databaseId,status,conclusion,workflowName,displayTitle,headBranch,updatedAt" \
+        --jq '.[] | [ "\(.databaseId)", "\(.status)", "\(.conclusion)", "\(.workflowName)", "\(.displayTitle)", "\(.headBranch)", "\(.updatedAt)" ] | @tsv' \
+      | column \
+        -s $'\t' \
+        -t \
+      | fzf --tac \
+      | cut \
+        -d " " \
+        -f 1
+    )"
+
+    if [ -z "${run_id}" ]; then
+      break
+    fi
+
+    curl \
+      -X "DELETE" \
+      -H "Accept: application/vnd.github.v3+json" \
+      -u "${username}:${GITHUB_TOKEN}" \
+      "https://api.github.com/repos/${repo}/actions/runs/${run_id}"
+  done
+>>>>>>> Stashed changes
 }

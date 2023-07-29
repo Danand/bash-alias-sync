@@ -27,7 +27,11 @@ function openvpn-profile() {
   rm -f "/etc/openvpn/client.conf"
 
   # shellcheck disable=SC2012
-  ls -1 /etc/openvpn/*.conf | fzf | cp "$(cat)" "/etc/openvpn/client.conf"
+  find "/etc/openvpn" \
+    -name "*.ovpn" \
+    -or -name "*.conf" \
+  | fzf \
+  | cp "$(cat)" "/etc/openvpn/client.conf"
 }
 
 function openvpn-connect() {
