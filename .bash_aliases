@@ -106,7 +106,7 @@ if [[ "${OSTYPE}" == "msys"* ]]; then
   __apply_aliases "mingw"
 fi
 
-if grep -q "microsoft" "/proc/version" && test ! -f ".dockerenv"; then
+if [ -f /proc/version ] && grep -q "microsoft" "/proc/version" && test ! -f ".dockerenv"; then
   __apply_aliases "wsl"
 fi
 
