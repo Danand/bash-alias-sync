@@ -229,6 +229,20 @@ function git-commit-hours() {
   git commit "$@"
 }
 
+function git-fixup-hard() {
+  tag="$(git describe --tags --exact-match HEAD 2>/dev/null || true)"
+
+  git add -A
+  git commit --amend --no-edit
+
+  git push --force
+
+  if [ ! -z "${tag}" ]; then
+    git tag -f "${tag}"
+    git push --tags --force
+  fi
+}
+
 function docker-compose-logs() {
   docker-compose "$@" logs --follow --timestamps
 }
