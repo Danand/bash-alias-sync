@@ -8,7 +8,13 @@ function non-existent-command-trap() {
 
     local history_last_line_number
 
-    history_last_line_number="$(builtin history | tail -n 1 | cut -d " " -f 2)"
+    # shellcheck disable=SC2030,SC2216,SC2031
+    history_last_line_number="$( \
+      builtin history \
+      | tail -n 1 \
+      | read -ar items \
+      | echo "${items[0]}" \
+    )"
 
     builtin history -d "${history_last_line_number}"
     builtin history -r
