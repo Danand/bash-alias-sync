@@ -22,5 +22,6 @@ function __try_install_via_brew() {
 __try_install_via_brew bash
 __try_install_via_brew fzf
 __try_install_via_brew ripgrep
+__try_install_via_brew gettext
 
 unset -f __try_install_via_brew
