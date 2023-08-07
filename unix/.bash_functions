@@ -329,7 +329,7 @@ function recall() {
   read \
     -er \
     -i "${entry}" \
-    -p "${PS1@P}" \
+    -p "$(__print_prompt)" \
     input
 
   # shellcheck disable=SC2154
@@ -338,6 +338,10 @@ function recall() {
 
   builtin history -w
   builtin history -n
+}
+
+function __print_prompt() {
+  echo "${PS1@P}"
 }
 
 function adb-stream() {
