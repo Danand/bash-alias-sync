@@ -47,7 +47,7 @@ function git-bump() {
   tag_latest="$(git describe --tags --abbrev=0)"
 
 	patch_old="$(echo "${tag_latest}" | awk -F '.' '{ print $NF }')"
-	patch_new="$(( $patch_old + 1 ))"
+	patch_new="$(( patch_old + 1 ))"
 	major_minor="$(echo "${tag_latest}" | awk -F '.' '{ print $1"."$2 }')"
 
 	tag_new="${major_minor}.${patch_new}"
@@ -79,7 +79,7 @@ function git-repo-cd-fzf {
   local repo
   repo="$(git-repo-ls | fzf)"
 
-  cd "${repo}"
+  cd "${repo}" || return 2
 }
 
 function measure() {
