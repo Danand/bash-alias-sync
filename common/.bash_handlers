@@ -6,15 +6,10 @@ function non-existent-command-trap() {
   if [ "$?" == "127" ]; then
     echo "Let's pretend we did not see that..."
 
-    local history_last_line_number
+    # shellcheck disable=SC2207
+    cells=($(builtin history | tail -n 1))
 
-    # shellcheck disable=SC2030,SC2216,SC2031
-    history_last_line_number="$( \
-      builtin history \
-      | tail -n 1 \
-      | read -ar items \
-      | echo "${items[0]}" \
-    )"
+    local history_last_line_number="${cells[0]}"
 
     builtin history -d "${history_last_line_number}"
     builtin history -r
