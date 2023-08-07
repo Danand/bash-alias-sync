@@ -1,1 +1,26 @@
 #!/bin/bash
+
+brew --version > /dev/null 2>&1
+
+if [ ! $? ]; then
+  /bin/bash -c '$(curl -fsSL "https://raw.githubusercontent.com/Homebrew/install/master/install.sh")'
+fi
+
+function __try_install_via_brew() {
+  local package="$1"
+
+  if ! brew list --formulae | grep -q "${package}"; then
+    brew install "${package}"
+  fi
+
+  if [ "${package}" == "bash" ]; then
+    sudo bash -c 'echo /usr/local/bin/bash >> /etc/shells'
+    chsh -s /usr/local/bin/bash
+  fi
+}
+
+__try_install_via_brew bash
+__try_install_via_brew fzf
+__try_install_via_brew ripgrep
+
+unset -f __try_install_via_brew
