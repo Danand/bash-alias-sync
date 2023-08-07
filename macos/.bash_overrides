@@ -1,5 +1,1 @@
 #!/bin/bash
-
-function __print_prompt() {
-  echo "${PS2}"
-}
