@@ -8,7 +8,7 @@ function non-existent-command-trap() {
 
     local history_last_line_number
 
-    history_last_line_number="$(builtin history | tail -n 1 | grep -Po "^\s*(\K\d*)\s*")"
+    history_last_line_number="$(builtin history | tail -n 1 | cut -d " " -f 2)"
 
     builtin history -d "${history_last_line_number}"
     builtin history -r
