@@ -237,7 +237,7 @@ function git-fixup-hard() {
 
   git push --force
 
-  if [ ! -z "${tag}" ]; then
+  if [ -n "${tag}" ]; then
     git tag -f "${tag}"
     git push --tags --force
   fi
@@ -253,7 +253,13 @@ function docker-compose-logs-pipe() {
 
 function docker-run-it-fzf() {
   local selected_image_line
-  selected_image_line="$(docker image ls | tail -n +2 | fzf | tr -s ' ')"
+
+  selected_image_line="$( \
+    docker image ls \
+    | tail -n +2 \
+    | fzf \
+    | tr -s ' ' \
+  )"
 
   local image_name
 

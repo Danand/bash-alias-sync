@@ -82,6 +82,16 @@ function git-repo-cd-fzf {
   cd "${repo}" || return 2
 }
 
+function git-patch-scp() {
+  local repo_path="$1"
+
+  local patch
+  patch="$(git diff --patch HEAD)"
+
+  # shellcheck disable=SC2029
+  ssh "${@:2}" -- "cd \"${repo_path}\" && echo '${patch}' | git apply"
+}
+
 function measure() {
   time "${@}"
   echo 1>&2
