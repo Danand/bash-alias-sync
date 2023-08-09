@@ -11,11 +11,11 @@ function __try_install_via_brew() {
 
   if ! brew list --formulae | grep -q "${package}"; then
     brew install "${package}"
-  fi
 
-  if [ "${package}" == "bash" ]; then
-    sudo bash -c 'echo /usr/local/bin/bash >> /etc/shells'
-    chsh -s /usr/local/bin/bash
+    if [ "${package}" == "bash" ]; then
+      sudo bash -c 'echo /usr/local/bin/bash >> /etc/shells'
+      chsh -s /usr/local/bin/bash
+    fi
   fi
 }
 
