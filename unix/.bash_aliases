@@ -11,6 +11,7 @@ alias docker-logs-fzf='docker logs --follow --timestamps --details $(docker cont
 alias docker-stats-fzf='docker stats $(docker ps | tail -n +2 | fzf | cut -d " " -f 1)'
 alias docker-stop-fzf='docker stop $(docker ps | tail -n +2 | fzf | cut -d " " -f 1)'
 alias docker-exec-bash-fzf='docker exec -it $(docker ps | tail -n +2 | fzf | cut -d " " -f 1) /bin/bash'
+alias docker-exec-sh-fzf='docker exec -it $(docker ps | tail -n +2 | fzf | cut -d " " -f 1) /bin/sh'
 alias docker-kill-fzf='docker kill $(docker ps | tail -n +2 | fzf | cut -d " " -f 1)'
 alias docker-restart-fzf='docker restart $(docker ps -a | tail -n +2 | fzf | cut -d " " -f 1)'
 alias docker-rm-fzf='docker rm $(docker ps -f "status=exited" | tail -n +2 | fzf | cut -d " " -f 1)'
