@@ -546,3 +546,93 @@ function gh-runs-rm-fzf() {
       "https://api.github.com/repos/${repo}/actions/runs/${run_id}"
   done
 }
+
+function docker-hub-token-bearer-obtain() {
+  if [ -z "${DOCKERHUB_USERNAME}" ]; then
+    DOCKERHUB_USERNAME="$(cat | cut -d "@" -f 1)"
+  fi
+
+  if [ -z "${DOCKERHUB_TOKEN}" ]; then
+    DOCKERHUB_TOKEN="$(cat | cut -d "@" -f 2)"
+  fi
+
+  curl \
+    -s \
+    -X "POST" \
+    -H "Content-Type: application/json" \
+    -d "{ \"username\": \"${DOCKERHUB_USERNAME}\", \"password\": \"${DOCKERHUB_TOKEN}\" }" \
+    "https://hub.docker.com/v2/users/login" \
+  | jq -r '.token'
+}
+
+function docker-hub-repo-tag-ls() {
+  if [ -z "${DOCKERHUB_BEARER}" ]; then
+    DOCKERHUB_BEARER="$(docker-hub-token-bearer-obtain)"
+    export DOCKERHUB_BEARER
+  fi
+
+  local image="$1"
+
+  local namespace
+  local repository
+
+  if echo "${image}" | grep -q "/"; then
+    namespace="$(echo "${image}" | cut -d "/" -f 1)"
+    repository="$(echo "${image}" | cut -d "/" -f 2)"
+  else
+    namespace="library"
+    repository="${image}"
+  fi
+
+  local response
+
+  response="$( \
+    curl \
+      -s \
+      -X "GET" \
+      -H "Content-Type: application/json" \
+      -H "Authorization: Bearer ${bearer_token}" \
+      "https://hub.docker.com/v2/namespaces/${namespace}/repositories/${repository}/tags"
+  )"
+
+  if [ "$(echo "${response}" | jq -r '.errinfo')" != "null" ]; then
+    echo "${response}" 1>&2
+    return 1
+  fi
+
+  echo "${response}"
+}
+
+function docker-hub-repo-tag-aliases() {
+  local input="$1"
+
+  local image
+  image="$(echo "${input}" | cut -d ":" -f 1)"
+
+  local tag
+  tag="$(echo "${input}" | cut -d ":" -f 2)"
+
+  local tags_json="$(docker-hub-repo-tag-ls "${image}")"
+
+  local digest_needle
+
+  digest_needle="$( \
+    echo "${tags_json}" \
+    | jq \
+      -r \
+      --arg tag "${tag}" \
+      '.results | .[] | select(.name == $tag) | .digest' \
+  )"
+
+  echo "${tags_json}" \
+  | jq \
+    -r \
+    --arg tag "${tag}" \
+    --arg digest_needle "${digest_needle}" \
+    '.results | .[] | select(.digest == $digest_needle and .name != $tag) | .name'
+}
+
+function docker-hub-repo-tag-latest() {
+  local input="$1"
+  docker-hub-repo-tag-aliases "${input}:latest"
+}
