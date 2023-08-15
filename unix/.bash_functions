@@ -7,6 +7,24 @@ function rg-fzf() {
   echo "${results}" | sort --uniq | fzf
 }
 
+function rg-code() {
+  rg \
+    --with-filename \
+    --vimgrep \
+    "$@" \
+  | while IFS=':' read -r path line column _; do
+      local path="${path//\\//}"
+      local goto_spec="${path}:${line}:${column}"
+
+      echo "Opening in VS Code: ${goto_spec}" 1>&2
+
+      code \
+        --reuse-window \
+        --goto "${goto_spec}" \
+      < /dev/null
+    done
+}
+
 function find-fzf() {
   local results
   results="$(find "$@")"
