@@ -552,6 +552,13 @@ function docker-hub-token-bearer-obtain() {
     DOCKERHUB_USERNAME="$(cat | cut -d "@" -f 1)"
   fi
 
+  local token_cache_tmp="/tmp/token-docker-hub-${DOCKERHUB_USERNAME}-$$"
+
+  if [ -f "${token_cache_tmp}" ]; then
+    cat "${token_cache_tmp}"
+    return 0
+  fi
+
   if [ -z "${DOCKERHUB_TOKEN}" ]; then
     DOCKERHUB_TOKEN="$(cat | cut -d "@" -f 2)"
   fi
@@ -562,15 +569,11 @@ function docker-hub-token-bearer-obtain() {
     -H "Content-Type: application/json" \
     -d "{ \"username\": \"${DOCKERHUB_USERNAME}\", \"password\": \"${DOCKERHUB_TOKEN}\" }" \
     "https://hub.docker.com/v2/users/login" \
-  | jq -r '.token'
+  | jq -r '.token' \
+  | tee "${token_cache_tmp}"
 }
 
 function docker-hub-repo-tag-ls() {
-  if [ -z "${DOCKERHUB_BEARER}" ]; then
-    DOCKERHUB_BEARER="$(docker-hub-token-bearer-obtain)"
-    export DOCKERHUB_BEARER
-  fi
-
   local image="$1"
 
   local namespace
@@ -584,6 +587,9 @@ function docker-hub-repo-tag-ls() {
     repository="${image}"
   fi
 
+  local bearer_token
+  bearer_token="$(docker-hub-token-bearer-obtain)"
+
   local response
 
   response="$( \
@@ -592,7 +598,7 @@ function docker-hub-repo-tag-ls() {
       -X "GET" \
       -H "Content-Type: application/json" \
       -H "Authorization: Bearer ${bearer_token}" \
-      "https://hub.docker.com/v2/namespaces/${namespace}/repositories/${repository}/tags"
+      "https://hub.docker.com/v2/namespaces/${namespace}/repositories/${repository}/tags" \
   )"
 
   if [ "$(echo "${response}" | jq -r '.errinfo')" != "null" ]; then
@@ -635,4 +641,139 @@ function docker-hub-repo-tag-aliases() {
 function docker-hub-repo-tag-latest() {
   local input="$1"
   docker-hub-repo-tag-aliases "${input}:latest"
+}
+
+function docker-registry-token-bearer-obtain() {
+  local image="$1"
+
+  local namespace
+  local repository
+
+  if echo "${image}" | grep -q "/"; then
+    namespace="$(echo "${image}" | cut -d "/" -f 1)"
+    repository="$(echo "${image}" | cut -d "/" -f 2)"
+  else
+    namespace="library"
+    repository="${image}"
+  fi
+
+  # TODO: Dehardcode.
+  local scope="pull"
+  local auth_host="auth.docker.io"
+  local auth_service="registry.docker.io"
+
+  local token_cache_tmp="/tmp/token-${auth_host}-${auth_service}-${namespace}-${repository}-${scope}-$$"
+
+  if [ -f "${token_cache_tmp}" ]; then
+    cat "${token_cache_tmp}"
+    return 0
+  fi
+
+  local url
+
+  url+="https://"
+  url+="${auth_host}"
+  url+="/token?service="
+  url+="${auth_service}"
+  url+="&scope=repository:"
+  url+="${namespace}/${repository}"
+  url+=":${scope}"
+
+  curl -fsSL "${url}" \
+  | jq -r '.token' \
+  | tee "${token_cache_tmp}"
+}
+
+function docker-registry-repo-tag-ls() {
+  local image="$1"
+
+  local namespace
+  local repository
+
+  if echo "${image}" | grep -q "/"; then
+    namespace="$(echo "${image}" | cut -d "/" -f 1)"
+    repository="$(echo "${image}" | cut -d "/" -f 2)"
+  else
+    namespace="library"
+    repository="${image}"
+  fi
+
+  local bearer_token
+  bearer_token="$(docker-registry-token-bearer-obtain "${image}")"
+
+  # TODO: Dehardcode.
+  local registry_host="registry-1.docker.io"
+
+  local response
+
+  response="$( \
+    curl \
+      -s \
+      -X "GET" \
+      -H "HOST: ${registry_host}" \
+      -H "Authorization: Bearer ${bearer_token}" \
+      "https://${registry_host}/v2/${namespace}/${repository}/tags/list" \
+  )"
+
+  if [ "$(echo "${response}" | jq -r '.errors')" != "null" ]; then
+    echo "${response}" 1>&2
+    return 1
+  fi
+
+  echo "${response}" \
+  | jq -r '.tags | reverse | .[]'
+}
+
+function docker-registry-repo-tag-aliases() {
+  local image="$1"
+
+  local namespace
+  local repository
+
+  if echo "${image}" | grep -q "/"; then
+    namespace="$(echo "${image}" | cut -d "/" -f 1)"
+    repository="$(echo "${image}" | cut -d "/" -f 2)"
+  else
+    namespace="library"
+    repository="${image}"
+  fi
+
+  local bearer_token
+  bearer_token="$(docker-registry-token-bearer-obtain "${image}")"
+
+  # TODO: Dehardcode.
+  local registry_host="registry-1.docker.io"
+
+  docker-registry-repo-tag-ls "${image}" \
+  | while read -r tag; do
+      local header_tmp
+      header_tmp="$(mktemp -q)"
+
+      local body_tmp
+      body_tmp="$(mktemp -q)"
+
+      curl \
+        -s \
+        -X "GET" \
+        -H "HOST: ${registry_host}" \
+        -H "Authorization: Bearer ${bearer_token}" \
+        -D "${header_tmp}" \
+        -o "${body_tmp}" \
+        "https://${registry_host}/v2/${namespace}/${repository}/manifests/${tag}"
+
+      cat "${body_tmp}" \
+      | jq -r '.tag' \
+      | tr -d "\n"
+
+      echo -en "\t"
+
+      cat "${header_tmp}" \
+      | grep -i "docker-content-digest" \
+      | awk '{print $2}'
+
+      rm -f "${header_tmp}"
+      rm -f "${body_tmp}"
+    done
+
+  # TODO: Match `latest` and some digest from current table which goes to `stdout`
 }
