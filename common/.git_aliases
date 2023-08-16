@@ -107,3 +107,7 @@ git config --global alias.shrink '!shrink() { \
   git config --unset pack.windowMemory && \
   git config --unset gc.auto; \
 }; shrink'
+
+git config --global alias.log-all-oneline '!log() { \
+  git log --all --graph --oneline "$@"; \
+}; log'

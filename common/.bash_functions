@@ -68,20 +68,6 @@ function git-repo-ls {
     done
 }
 
-function git-repo-rm-fzf {
-  local repo
-  repo="$(git-repo-ls | fzf)"
-
-  rm -rf "${repo}"
-}
-
-function git-repo-cd-fzf {
-  local repo
-  repo="$(git-repo-ls | fzf)"
-
-  cd "${repo}" || return 2
-}
-
 function git-patch-scp() {
   local repo_path="$1"
 

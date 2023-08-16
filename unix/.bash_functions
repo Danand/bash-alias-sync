@@ -261,6 +261,56 @@ function git-fixup-hard() {
   fi
 }
 
+function git-repo-rm-fzf {
+  local repo
+  repo="$(git-repo-ls | fzf)"
+
+  rm -rf "${repo}"
+}
+
+function git-repo-cd-fzf {
+  local repo
+  repo="$(git-repo-ls | fzf)"
+
+  cd "${repo}" || return 2
+}
+
+function __git_show_preview() {
+  echo "$1" \
+  | cut -d " " -f 1 \
+  | git show \
+    --stat \
+    --oneline \
+    --color="always" \
+    "$(cat)"
+}
+
+export -f __git_show_preview
+
+function git-show-fzf {
+  # shellcheck disable=SC2016
+  git log \
+    --oneline \
+    --color="always" \
+    --decorate="short" \
+    "$@" \
+  | fzf \
+    --ansi \
+    --no-sort \
+    --layout="reverse" \
+    --preview-window="hidden" \
+    --preview="__git_show_preview {}" \
+    --bind="space:toggle-preview" \
+  | cut -d ' ' -f 1 \
+  | while read -r rev; do
+      git diff \
+        --color="always" \
+        --unified=1 \
+        "${rev}^..${rev}"
+      break
+    done
+}
+
 function docker-compose-logs() {
   docker-compose "$@" logs --follow --timestamps
 }
