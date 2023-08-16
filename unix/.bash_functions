@@ -715,6 +715,7 @@ function docker-registry-token-bearer-obtain() {
   local token_cache_tmp="/tmp/token-${auth_host}-${auth_service}-${namespace}-${repository}-${scope}-$$"
 
   if [ -f "${token_cache_tmp}" ]; then
+    echo "debug: Got token from cache ${token_cache_tmp}" 1>&2
     cat "${token_cache_tmp}"
     return 0
   fi
@@ -728,6 +729,8 @@ function docker-registry-token-bearer-obtain() {
   url+="&scope=repository:"
   url+="${namespace}/${repository}"
   url+=":${scope}"
+
+  echo "warning: Got NEW token and put to cache ${token_cache_tmp}" 1>&2
 
   curl -fsSL "${url}" \
   | jq -r '.token' \
@@ -811,6 +814,18 @@ function docker-registry-repo-tag-aliases() {
         -o "${body_tmp}" \
         "https://${registry_host}/v2/${namespace}/${repository}/manifests/${tag}"
 
+      local errors
+
+      errors="$( \
+        cat "${body_tmp}" \
+        | jq -r '. | .errors'
+      )"
+
+      if [ "${errors}" != "null" ]; then
+        echo "${errors}" 1>&2
+        return 1
+      fi
+
       cat "${body_tmp}" \
       | jq -r '.tag' \
       | tr -d "\n"
@@ -825,5 +840,7 @@ function docker-registry-repo-tag-aliases() {
       rm -f "${body_tmp}"
     done
 
-  # TODO: Match `latest` and some digest from current table which goes to `stdout`
+  # TODO: Implement search. There is drafts:
+  # digest_latest=$(while IFS=$'\t' read -r tag digest; do if [ "${tag}" == "latest" ]; then echo "${digest}"; fi; done)
+  # while IFS=$'\t' read -r tag digest; do if [ "${digest}" == "${digest_latest}" ]; then echo "${tag}"; fi; done
 }
