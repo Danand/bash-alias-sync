@@ -731,6 +731,7 @@ function docker-registry-token-bearer-obtain() {
   url+=":${scope}"
 
   echo "warning: Got NEW token and put to cache ${token_cache_tmp}" 1>&2
+  echo "warning: Handling this API is not stable and restricted to 100 requests per 6 hours for non-paid accounts" 1>&2
 
   curl -fsSL "${url}" \
   | jq -r '.token' \
