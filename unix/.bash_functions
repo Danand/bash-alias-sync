@@ -129,6 +129,8 @@ function git-checkout-fzf() {
 }
 
 function git-checkout-remote-fzf() {
+  git fetch-all
+
   local branches
 
   branches="$(git branch --remote --format="%(refname:short)" | cut -d "/" -f 2-)"
@@ -149,6 +151,15 @@ function git-checkout-remote-fzf() {
     --force \
     --recurse-submodules \
     "${selected_branch}"
+
+  git reset \
+    --hard \
+    "origin/${selected_branch}"
+
+  git submodule update \
+    --force \
+    --recursive \
+    --remote
 }
 
 function git-checkout-file-fzf() {
