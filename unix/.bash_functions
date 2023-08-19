@@ -856,3 +856,37 @@ function docker-registry-repo-tag-aliases() {
   # digest_latest=$(while IFS=$'\t' read -r tag digest; do if [ "${tag}" == "latest" ]; then echo "${digest}"; fi; done)
   # while IFS=$'\t' read -r tag digest; do if [ "${digest}" == "${digest_latest}" ]; then echo "${tag}"; fi; done
 }
+
+function __docker_list_ancestors() {
+  local parent_row="$1"
+
+  local parent_id
+  local parent_id="$(echo "${parent_row}" | cut -d " " -f 1)"
+
+  docker ps -a -f "ancestor=${parent_id}"
+}
+
+export -f __docker_list_ancestors
+
+function docker-rmi-fzf() {
+  local image_ids
+
+  image_ids="$( \
+    docker image ls --format="{{.ID}}\t{{.Repository}}\t{{.Tag}}\t{{.Size}}" \
+    | column -t \
+    | fzf \
+      --multi \
+      --preview='__docker_list_ancestors {}' \
+      --bind="ctrl-a:select-all" \
+    | cut \
+      -d " " \
+      -f 1 \
+  )"
+
+  echo "${image_ids}" \
+  | while read -r image_id; do
+      if [ -n "${image_id}" ]; then
+        docker rmi --force "${image_id}"
+      fi
+    done
+}
