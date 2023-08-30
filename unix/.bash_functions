@@ -460,6 +460,50 @@ function adb-sensor-ls() {
   | sort --uniq
 }
 
+function android-sdkmanager-fzf() {
+  local managers
+
+  # TODO: Dehardcode Unity path.
+  managers="$(find "/c/Program Files/Unity/Hub/Editor" -type f -path "*bin/sdkmanager.bat" 2>/dev/null)"
+
+  if [ -z "${managers}" ]; then
+    echo "No Android SDK managers found"
+    return 1
+  fi
+
+  local manager
+
+  manager="$(echo "${managers}" | fzf)"
+
+  if [ -z "${manager}" ]; then
+    echo "No Android SDK manager selected"
+    return 1
+  fi
+
+  local packages
+
+  packages="$( \
+    "${manager}" --list 2>/dev/null \
+    | grep '.*;.*|' \
+    | tr -s " " \
+    | cut -d '|' -f 1 \
+    | sed -e 's/^[[:space:]]*//' \
+  )"
+
+  local package
+
+  package="$(echo "${packages}" | fzf)"
+
+  if [ -z "${package}" ]; then
+    echo "No Android SDK package selected"
+    return 1
+  fi
+
+  "${manager}" "${package}"
+
+  echo "y" | "${manager}" --licenses
+}
+
 function ip-local() {
   ip -4 addr show \
   | awk '/inet / {print $2}' \
