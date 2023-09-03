@@ -37,7 +37,7 @@ function openvpn-profile() {
 function openvpn-connect() {
   sudo killall openvpn 2>/dev/null
 
-  sudo openvpn "/etc/openvpn/client.conf" &
+  sudo nohup openvpn "/etc/openvpn/client.conf" > /dev/null 2>&1 &
 
   sleep 5
 
@@ -52,7 +52,7 @@ function openvpn-connect() {
 }
 
 function openvpn-disconnect() {
-  sudo killall openvpn
+  sudo killall openvpn > /dev/null 2>&1
 
   sleep 5
 
