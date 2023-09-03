@@ -934,3 +934,11 @@ function docker-rmi-fzf() {
       fi
     done
 }
+
+function rm-fzf() {
+  find . -maxdepth 1 -type f \
+  | fzf --multi \
+  | while read -r path; do
+      rm -f "${path}"
+    done
+}
