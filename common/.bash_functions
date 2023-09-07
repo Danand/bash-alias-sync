@@ -78,6 +78,13 @@ function git-patch-scp() {
   ssh "${@:2}" -- "cd \"${repo_path}\" && echo '${patch}' | git apply"
 }
 
+function git-log-oneline {
+  git log \
+    --format=$'%h\t%ad\t%aN\t%s' \
+    --date="iso-strict" \
+    "$@"
+}
+
 function measure() {
   time "${@}"
   echo 1>&2

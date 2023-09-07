@@ -322,6 +322,21 @@ function git-show-fzf {
     done
 }
 
+function git-cherry-pick-fzf() {
+  git-log-oneline "$@" \
+  | fzf \
+    --multi \
+    --reverse \
+    --no-sort \
+  | tac \
+  | cut \
+    -d $'\t' \
+    -f 1 \
+  | while read -r rev; do
+      git cherry-pick "${rev}"
+    done
+}
+
 function docker-compose-logs() {
   docker-compose "$@" logs --follow --timestamps
 }
