@@ -22,3 +22,10 @@ __try_install_via_winget "BurntSushi.ripgrep.MSVC"
 __try_install_via_winget "fzf"
 
 unset -f __try_install_via_winget
+
+bin_install_dir="${HOME}/bin"
+
+mkdir -p "${bin_install_dir}"
+
+curl -L "https://github.com/stedolan/jq/releases/latest/download/jq-win64.exe" -o "${bin_install_dir}/jq.exe"
+

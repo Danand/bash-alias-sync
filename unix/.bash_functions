@@ -957,3 +957,25 @@ function rm-fzf() {
       rm -f "${path}"
     done
 }
+
+function npm-local-path() {
+  pwd
+}
+
+function npm-local-format() {
+  local package
+  package="$(pwd)/package.json"
+
+  if [ ! -f "${package}" ]; then
+    echo "error: There is no NPM package in CWD"
+    return 1
+  fi
+
+  local package_name
+  package_name="$(jq -r '.name' < "${package}")"
+
+  local package_path_absolute
+  package_path_absolute="file:$(npm-local-path)"
+
+  echo "\"${package_name}\": \"${package_path_absolute}\","
+}
