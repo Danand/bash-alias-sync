@@ -952,9 +952,28 @@ function docker-rmi-fzf() {
 
 function rm-fzf() {
   find . -maxdepth 1 -type f \
+  | sort \
   | fzf --multi \
   | while read -r path; do
       rm -f "${path}"
+    done
+}
+
+function rmdir-fzf() {
+  find . -maxdepth 1 -type d \
+  | sort \
+  | fzf --multi \
+  | while read -r path; do
+      rm -rf "${path}"
+    done
+}
+
+function foreach-fzf() {
+  find . -maxdepth 1 -type f \
+  | sort \
+  | fzf --multi \
+  | while read -r path; do
+      "$@" "${path}"
     done
 }
 
