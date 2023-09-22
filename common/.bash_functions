@@ -200,3 +200,23 @@ function grep-errors() {
     -ie "mistake" \
     -ie "defect"
 }
+
+function npm-install-recursive() {
+  find \
+    . -type f \
+    -name "package.json" \
+    -and -not -path "*node_modules*" \
+  | while read -r package_path; do
+      local package_dir
+      package_dir="$(dirname "${package_path}")"
+
+      echo
+      echo "Running \`npm install\` at \`${package_dir}\`:"
+
+      ( \
+        cd "${package_dir}" \
+        && npm install \
+      )
+
+    done
+}
