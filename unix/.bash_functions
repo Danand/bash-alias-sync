@@ -337,6 +337,21 @@ function git-cherry-pick-fzf() {
     done
 }
 
+function git-log-file-fzf() {
+  local log
+
+  log="$( \
+    git-log-oneline \
+      --all \
+      -- "$@" \
+  )"
+
+  echo "${log}" | fzf \
+    --reverse \
+    --no-sort \
+    --preview="git show -- $@"
+}
+
 function docker-compose-logs() {
   docker-compose "$@" logs --follow --timestamps
 }
