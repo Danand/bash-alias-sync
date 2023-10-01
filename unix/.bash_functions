@@ -337,6 +337,16 @@ function git-cherry-pick-fzf() {
     done
 }
 
+function __git_show_preview_file() {
+  echo "$1" \
+  | cut -d $'\t' -f 1 \
+  | git show \
+    --color="always" \
+    "$(cat)"
+}
+
+export -f __git_show_preview_file
+
 function git-log-file-fzf() {
   local log
 
@@ -347,9 +357,10 @@ function git-log-file-fzf() {
   )"
 
   echo "${log}" | fzf \
-    --reverse \
+    --ansi \
     --no-sort \
-    --preview="git show -- $@"
+    --layout="reverse" \
+    --preview="__git_show_preview_file {}"
 }
 
 function docker-compose-logs() {
