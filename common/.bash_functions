@@ -220,3 +220,16 @@ function npm-install-recursive() {
 
     done
 }
+
+function touch-p() {
+  local path="$1"
+
+  local dir
+  dir="$(dirname "${path}")"
+
+  mkdir -p "${dir}"
+
+  touch "${path}"
+
+  echo "${path}"
+}
