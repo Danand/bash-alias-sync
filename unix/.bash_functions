@@ -411,6 +411,42 @@ function venv-init() {
   fi
 }
 
+function venv-create() {
+  python -m venv .venv
+}
+
+function venv-activate() {
+  # shellcheck source=/dev/null
+  source .venv/bin/activate
+}
+
+function venv-deactivate() {
+  deactivate
+}
+
+function venv-reset() {
+  rm -rf .venv
+}
+
+function pip-restore() {
+  pip install \
+    --require-virtualenv \
+    -r requirements.txt
+}
+
+function pip-uninstall-all() {
+  pip freeze \
+  | xargs pip uninstall \
+      --require-virtualenv \
+      -y
+}
+
+function pip-uninstall-fzf() {
+  pip freeze \
+  | fzf \
+  | pip uninstall "$(cat)" -y
+}
+
 function uniq-unsorted() {
   local index=0
 
