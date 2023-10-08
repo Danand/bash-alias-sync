@@ -1052,6 +1052,8 @@ function docker-container-fzf() {
       -d " " \
       -f 1 \
   )"
+
+  echo "${container}"
 }
 
 function docker-logs-fzf() {
