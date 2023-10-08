@@ -364,11 +364,20 @@ function git-log-file-fzf() {
 }
 
 function docker-compose-logs() {
-  docker-compose "$@" logs --follow --timestamps
+  docker-compose \
+    "$@" \
+    logs \
+      --follow \
+      --timestamps
 }
 
 function docker-compose-logs-pipe() {
-  docker-compose "$@" logs --follow --timestamps "$(cat)"
+  docker-compose \
+    "$@" \
+    logs \
+      --follow \
+      --timestamps \
+    "$(cat)"
 }
 
 function docker-run-it-fzf() {
@@ -982,7 +991,7 @@ function __docker_list_ancestors() {
   local parent_row="$1"
 
   local parent_id
-  local parent_id="$(echo "${parent_row}" | cut -d " " -f 1)"
+  parent_id="$(echo "${parent_row}" | cut -d " " -f 1)"
 
   docker ps -a -f "ancestor=${parent_id}"
 }
@@ -1010,6 +1019,97 @@ function docker-rmi-fzf() {
         docker rmi --force "${image_id}"
       fi
     done
+}
+
+function docker-prune() {
+  yes | docker system prune -a --force
+}
+
+function docker-stop-all() {
+  docker stop "$(docker ps -q)"
+}
+
+function docker-kill-all() {
+  docker kill "$(docker ps -q)"
+}
+
+function docker-rm-all() {
+  docker rm "$(docker ps -a -q)"
+}
+
+function docker-rmi-all() {
+  docker rmi -f "$(docker images -aq)"
+}
+
+function docker-container-fzf() {
+  local container
+
+  container="$( \
+    docker ps "$@" \
+    | tail -n +2 \
+    | fzf \
+    | cut \
+      -d " " \
+      -f 1 \
+  )"
+}
+
+function docker-logs-fzf() {
+  local container
+  container="$(docker-container-fzf)"
+
+  docker logs --follow --timestamps --details
+}
+
+function docker-stats-fzf() {
+  local container
+  container="$(docker-container-fzf)"
+
+  docker stats "${container}"
+}
+
+function docker-stop-fzf() {
+  local container
+  container="$(docker-container-fzf)"
+
+  docker stop "${container}"
+}
+
+function docker-exec-fzf() {
+  local container
+  container="$(docker-container-fzf)"
+
+  docker exec -it "${container}" "$@"
+}
+
+function docker-kill-fzf() {
+  local container
+  container="$(docker-container-fzf)"
+
+  docker kill "${container}"
+}
+
+function docker-restart-fzf() {
+  local container
+  container="$(docker-container-fzf -a)"
+
+  docker restart "${container}"
+}
+
+function docker-rm-fzf() {
+  local container
+  container="$(docker-container-fzf -f "status=exited")"
+
+  docker rm "${container}"
+}
+
+function docker-ignore-ls() {
+  rsync \
+    -avn \
+    . \
+    "/dev/shm" \
+    --exclude=".git" \
+    --include-from=".dockerignore"
 }
 
 function rm-fzf() {
