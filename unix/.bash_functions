@@ -463,7 +463,7 @@ function uniq-unsorted() {
     -f 2
 }
 
-function recall() {
+function recall-fzf() {
   local entry
 
   builtin history -a

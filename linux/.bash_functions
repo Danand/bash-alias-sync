@@ -23,7 +23,7 @@ function code-new() {
   code "$1" --reuse-window
 }
 
-function openvpn-profile() {
+function openvpn-profile-fzf() {
   rm -f "/etc/openvpn/client.conf"
 
   # shellcheck disable=SC2012
@@ -71,7 +71,7 @@ function ipinfo() {
   echo
 }
 
-function doctl-ssh() {
+function doctl-ssh-fzf() {
   doctl compute ssh "$( \
     doctl compute droplet list \
       --format="ID,Name,PublicIPv4,Region,Image" \
@@ -221,7 +221,7 @@ function apport-unpack-fzf() {
 
 # shellcheck disable=SC2129
 # shellcheck disable=SC2016
-function path-edit() {
+function path-edit-fzf() {
   local path_before="${PATH}"
 
   local tmp
