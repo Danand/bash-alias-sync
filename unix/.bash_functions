@@ -1060,7 +1060,10 @@ function docker-logs-fzf() {
   local container
   container="$(docker-container-fzf)"
 
-  docker logs --follow --timestamps --details
+  docker logs \
+    --follow \
+    --timestamps \
+    --details
 }
 
 function docker-stats-fzf() {
