@@ -1063,7 +1063,8 @@ function docker-logs-fzf() {
   docker logs \
     --follow \
     --timestamps \
-    --details
+    --details \
+    "${container}"
 }
 
 function docker-stats-fzf() {
@@ -1106,15 +1107,6 @@ function docker-rm-fzf() {
   container="$(docker-container-fzf -f "status=exited")"
 
   docker rm "${container}"
-}
-
-function docker-ignore-ls() {
-  rsync \
-    -avn \
-    . \
-    "/dev/shm" \
-    --exclude=".git" \
-    --include-from=".dockerignore"
 }
 
 function rm-fzf() {
