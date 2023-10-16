@@ -66,11 +66,6 @@ function openvpn-disconnect() {
   echo
 }
 
-function ipinfo() {
-  curl "https://ipinfo.io/?token=${IPINFO_TOKEN}"
-  echo
-}
-
 function doctl-ssh-fzf() {
   doctl compute ssh "$( \
     doctl compute droplet list \
@@ -217,90 +212,4 @@ function apport-unpack-fzf() {
 
   rm -rf "${unpack_dir}"
   rm -f "${gdb_commands}"
-}
-
-# shellcheck disable=SC2129
-# shellcheck disable=SC2016
-function path-edit-fzf() {
-  local path_before="${PATH}"
-
-  local tmp
-  tmp="$(mktemp)"
-
-  echo "${PATH}" \
-  | tr ":" "\n" \
-  | uniq-unsorted \
-  > "${tmp}"
-
-  local chosen_editor
-
-  chosen_editor="$( \
-    ( \
-      echo "nano"; \
-      echo "code"; \
-      echo "vi"; \
-    ) \
-    | fzf \
-        --header="Choose editor:" \
-        --layout="reverse" \
-        --no-sort \
-        --height="25%" \
-  )"
-
-  if [ "${chosen_editor}" == "code" ]; then
-    code --new-window --wait "${tmp}"
-  elif [ "${chosen_editor}" == "nano" ]; then
-    nano "${tmp}"
-  elif [ "${chosen_editor}" == "vi" ]; then
-    vi "${tmp}"
-  elif [ -z "${chosen_editor}" ]; then
-    return 0
-  else
-    echo "Not supported editor chosen: ${chosen_editor}" 1>&2
-    return 1
-  fi
-
-  PATH="$(echo -n "$(cat "${tmp}")" | tr "\n" ":")"
-  export PATH
-
-  rm -f "${tmp}"
-
-  # My personal choice to store the PATH:
-  local target_file="${HOME}/.bash_path"
-
-  echo '#!/bin/bash' > "${target_file}"
-  echo >> "${target_file}"
-  echo 'unset PATH' >> "${target_file}"
-  echo >> "${target_file}"
-
-  local is_first_path_assigned=false
-
-  echo "${PATH}" \
-  | while read -d ":" -r dir; do
-      if [ ! -d "${dir}" ]; then
-        continue
-      fi
-
-      local dir_subst="${dir/${HOME}/'${HOME}'}"
-
-      echo -n 'export PATH="' >> "${target_file}"
-      echo -n "${dir_subst}" >> "${target_file}"
-
-      if $is_first_path_assigned; then
-        echo -n ':${PATH}' >> "${target_file}"
-      else
-        is_first_path_assigned=true
-      fi
-      echo '"' >> "${target_file}"
-    done
-
-  echo
-  echo "PATH modified:"
-  echo
-  diff \
-    --side-by-side \
-    --color="always"  \
-    <(echo "${path_before}" | tr ":" "\n" | sort --uniq) \
-    <(echo "${PATH}" | tr ":" "\n" | sort --uniq)
-  echo
 }

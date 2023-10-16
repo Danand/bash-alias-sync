@@ -7,3 +7,6 @@ export UPDATE_MARKER_FILE
 
 BASH_PATH_FILE="${HOME}/.bash_path"
 export BASH_PATH_FILE
+
+BASH_SECRETS_FILE="${HOME}/.bash_secrets"
+export BASH_SECRETS_FILE

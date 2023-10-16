@@ -86,6 +86,14 @@ if [ -f "${UPDATE_MARKER_FILE}" ]; then
   rm -f "${UPDATE_MARKER_FILE}"
 fi
 
+if [ -f "${BASH_PATH_FILE}" ]; then
+  source "${BASH_PATH_FILE}"
+fi
+
+if [ -f "${BASH_SECRETS_FILE}" ]; then
+  source "${BASH_SECRETS_FILE}"
+fi
+
 # shellcheck source=/dev/null
 source "${BASH_ALIAS_SYNC_REPO}/.bash_functions"
 
@@ -95,10 +103,6 @@ __apply_aliases "unix"
 if [[ "${OSTYPE}" == "darwin"* ]]; then
   __apply_aliases "macos"
 elif [[ "${OSTYPE}" == "linux"* ]]; then
-  if [ -f "${BASH_PATH_FILE}" ]; then
-    source "${BASH_PATH_FILE}"
-  fi
-
   __apply_aliases "linux"
 fi
 
