@@ -1209,8 +1209,6 @@ function path-edit-fzf() {
 
   echo '#!/bin/bash' > "${target_file}"
   echo >> "${target_file}"
-  echo 'unset PATH' >> "${target_file}"
-  echo >> "${target_file}"
 
   local is_first_path_assigned=false
 
