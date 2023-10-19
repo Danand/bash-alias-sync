@@ -1205,7 +1205,7 @@ function path-edit-fzf() {
   rm -f "${tmp}"
 
   # My personal choice to store the PATH:
-  local target_file="${HOME}/.bash_path"
+  local target_file="${BASH_PATH_FILE}"
 
   echo '#!/bin/bash' > "${target_file}"
   echo >> "${target_file}"
