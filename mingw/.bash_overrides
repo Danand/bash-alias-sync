@@ -1,1 +1,7 @@
 #!/bin/bash
+
+function rg() {
+  "$(which rg)" \
+    --path-separator='//' \
+    "$@"
+}
