@@ -473,10 +473,11 @@ function uniq-unsorted() {
 }
 
 function recall-fzf() {
-  local entry
-
   builtin history -a
-  builtin history -w
+  builtin history -c
+  builtin history -r
+
+  local entry
 
   # shellcheck disable=SC2002
   entry="$( \
@@ -490,8 +491,6 @@ function recall-fzf() {
       --no-sort \
       --height="33%" \
   )"
-
-  builtin history -s "recall"
 
   if [ -z "${entry}" ]; then
     return 0
@@ -507,8 +506,7 @@ function recall-fzf() {
   eval "${input}" \
   && builtin history -s "${input}"
 
-  builtin history -w
-  builtin history -n
+  builtin history -a
 }
 
 function adb-stream() {
