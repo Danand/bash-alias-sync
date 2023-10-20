@@ -502,9 +502,8 @@ function recall-fzf() {
     -p "${PS1@P}" \
     input
 
-  # shellcheck disable=SC2154
-  eval "${input}" \
-  && builtin history -s "${input}"
+  ($input) && \
+  builtin history -s "${input}"
 }
 
 function adb-stream() {
