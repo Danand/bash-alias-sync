@@ -505,8 +505,6 @@ function recall-fzf() {
   # shellcheck disable=SC2154
   eval "${input}" \
   && builtin history -s "${input}"
-
-  builtin history -a
 }
 
 function adb-stream() {
