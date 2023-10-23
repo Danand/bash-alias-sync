@@ -78,6 +78,7 @@ git config --global alias.clear '!reset() { \
 
 git config --global alias.pull-hard '!pull() { \
   rm -f ".git/index.lock" && \
+  git fetch \
   git reset --hard "origin/$(git branch --show-current)" && \
   git clean -fd && \
   git submodule update; \

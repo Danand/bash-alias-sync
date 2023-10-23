@@ -206,14 +206,16 @@ function git-checkout-file-fzf() {
 }
 
 function git-conflict-resolve-fzf() {
-  local file
+  local status
 
-  file="$( \
+  status="$(
     git diff \
       --name-only \
       --diff-filter="U" \
-    | fzf \
   )"
+
+  local file
+  file="$(echo "${status}" | fzf)"
 
   if [ -z "${file}" ]; then
     return 1
