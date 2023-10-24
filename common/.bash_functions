@@ -85,6 +85,10 @@ function git-log-oneline {
     "$@"
 }
 
+function git-log-last-message() {
+  git log -1 --format='%s'
+}
+
 function measure() {
   time "${@}"
   echo 1>&2
