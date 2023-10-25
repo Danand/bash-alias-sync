@@ -89,6 +89,13 @@ function git-log-last-message() {
   git log -1 --format='%s'
 }
 
+function git-branch-push-copy() {
+  local branch="$1"
+
+  git branch "${branch}"
+  git push origin "${branch}:${branch}"
+}
+
 function measure() {
   time "${@}"
   echo 1>&2
