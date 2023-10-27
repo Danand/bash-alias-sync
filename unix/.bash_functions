@@ -504,7 +504,7 @@ function recall-fzf() {
     -p "${PS1@P}" \
     input
 
-  ($input) && \
+  eval "${input}" && \
   builtin history -s "${input}"
 }
 
