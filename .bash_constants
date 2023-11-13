@@ -2,7 +2,7 @@
 #
 # Constants for sharing during loading of aliases.
 
-UPDATE_MARKER_FILE="/tmp/bash-alias-sync-sheduled-update"
+UPDATE_MARKER_FILE="/tmp/bash-alias-sync-scheduled-update"
 export UPDATE_MARKER_FILE
 
 BASH_PATH_FILE="${HOME}/.bash_path"
