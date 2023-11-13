@@ -1124,6 +1124,19 @@ function rmdir-fzf() {
     done
 }
 
+function cd-fzf() {
+  local dir
+  
+  dir="$( \
+    find . -maxdepth 1 -type d \
+    | concat ".." \
+    | sort \
+    | fzf \
+  )"
+
+  cd "${dir}" || return 2
+}
+
 function foreach-fzf() {
   find . -maxdepth 1 -type f \
   | sort \

@@ -171,15 +171,15 @@ function remember() {
   fi
 }
 
-function shell-prompt-apply-mingw-like-without-git() {
+function prompt-apply-mingw-like-without-git() {
   PS1='\n\[\033[1m\]\[\033[32m\]`whoami`\[\033[0m\]@\[\033[34m\]`uname -n`\[\033[0m\]:`pwd`\[\033[36m\]\[\033[0m\]\[\033[0m\]\n$ '
 }
 
-function shell-prompt-apply-mingw-like() {
+function prompt-apply-mingw-like() {
   PS1='\n\[\033[1m\]\[\033[32m\]`whoami`\[\033[0m\]@\[\033[34m\]`uname -n`\[\033[0m\]:`pwd`\[\033[36m\]`__git_ps1`\[\033[0m\]\[\033[0m\]\n$ '
 }
 
-function shell-prompt-apply-with-date() {
+function prompt-apply-with-date() {
   PS1='\n\[\033[1m\]\[\033[32m\]`whoami`\[\033[0m\]@\[\033[34m\]`uname -n`\[\033[0m\]:`pwd` \[\033[0;34m\]`date +"%Y-%m-%d %H-%M-%S"`\[\033[0m\] \$ '
 }
 
@@ -243,4 +243,13 @@ function touch-p() {
   touch "${path}"
 
   echo "${path}"
+}
+
+function concat() {
+  cat
+  
+  while [ ! $# -eq 0 ]; do
+    echo "$1"
+    shift
+  done
 }

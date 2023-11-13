@@ -115,3 +115,7 @@ if [ -f /proc/version ] && grep -q "microsoft" "/proc/version" && test ! -f ".do
 fi
 
 __export_functions
+
+if [ -f "${BASH_OVERRIDES_FILE}" ]; then
+  source "${BASH_OVERRIDES_FILE}"
+fi

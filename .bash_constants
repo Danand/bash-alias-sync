@@ -10,3 +10,6 @@ export BASH_PATH_FILE
 
 BASH_SECRETS_FILE="${HOME}/.bash_secrets"
 export BASH_SECRETS_FILE
+
+BASH_OVERRIDES_FILE="${HOME}/.bash_overrides"
+export BASH_OVERRIDES_FILE
