@@ -88,10 +88,14 @@ fi
 
 if [ -f "${BASH_PATH_FILE}" ]; then
   source "${BASH_PATH_FILE}"
+else
+  touch "${BASH_PATH_FILE}"
 fi
 
 if [ -f "${BASH_SECRETS_FILE}" ]; then
   source "${BASH_SECRETS_FILE}"
+else
+  touch "${BASH_SECRETS_FILE}"
 fi
 
 # shellcheck source=/dev/null
@@ -118,4 +122,6 @@ __export_functions
 
 if [ -f "${BASH_OVERRIDES_FILE}" ]; then
   source "${BASH_OVERRIDES_FILE}"
+else
+  touch "${BASH_OVERRIDES_FILE}"
 fi
