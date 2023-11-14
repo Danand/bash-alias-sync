@@ -31,7 +31,7 @@
 ├── .bash_aliases # Entry point.
 ├── common # Common aliases.
 │   ├── .bash_aliases # Aliases without arguments.
-│   ├── .bash_deps # Installation of dependecies.
+│   ├── .bash_deps # Installation of dependencies.
 │   ├── .bash_overrides # Optional overrides for some commands.
 │   ├── .git_aliases # Aliases for Git.
 │   ├── .bash_constants # Exported constants.
