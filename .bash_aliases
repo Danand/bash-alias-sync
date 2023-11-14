@@ -74,6 +74,63 @@ function __apply_aliases() {
   fi
 }
 
+function __contains() {
+  local needles
+
+  entries=($(cat))
+  needles=("$@")
+
+  for entry in "${entries[@]}"; do
+    for needle in "${needles[@]}"; do
+      if [ "${entry}" == "${needle}" ]; then
+        return 0
+      fi
+    done
+  done
+
+  return 1
+}
+
+__SECRETS_EXCLUDE=( \
+  "ARGV" \
+  "COMMIT_MSG_FILE" \
+  "COMMIT_SOURCE" \
+  "GIT_DIR" \
+  "GIT_PUSH_OPTION_" \
+  "GIT_PUSH_OPTION_COUNT" \
+  "NF" \
+  "SHA1" \
+  "SOB" \
+)
+
+export __SECRETS_EXCLUDE
+
+function __check_tokens() {
+  rg \
+    --hidden \
+    --only-matching \
+    --replace '$1' \
+    --no-messages \
+    --no-filename \
+    --no-line-number \
+    '\$+\{?([A-Z0-9_]+)\}?' \
+    "${BASH_ALIAS_SYNC_REPO}" \
+  | sort --uniq \
+  | while read -r varname; do
+      if \
+        [ -z "${!varname}" ] \
+        && ! echo "${__SECRETS_EXCLUDE[*]}" | __contains "${varname}" \
+        && ! echo "${varname}" | grep -q '^[0-9]*$'
+      then
+        echo -e 1>&2
+        echo -e "${COLOR_YELLOW}warning: Variable is not set for the current session:${COLOR_CLEAR} \`${COLOR_CYAN}${varname}${COLOR_CLEAR}\`" 1>&2
+        echo -e 1>&2
+        echo -e "You can add it to \`${COLOR_CYAN}~/.bash_secrets${COLOR_CLEAR}\`:" 1>&2
+        echo -e "  echo 'export ${varname}=\"YOUR-VALUE-HERE\"' >> ~/.bash_secrets" 1>&2
+      fi
+    done
+}
+
 # EXECUTION
 
 if [ -f "${UPDATE_MARKER_FILE}" ]; then
@@ -125,3 +182,5 @@ if [ -f "${BASH_OVERRIDES_FILE}" ]; then
 else
   touch "${BASH_OVERRIDES_FILE}"
 fi
+
+__check_tokens
