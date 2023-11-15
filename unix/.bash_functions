@@ -407,8 +407,24 @@ function ffmpeg-speedup() {
   ffmpeg -i "$1" -filter:v "setpts=${speed}*PTS" "${@:3}" "speed-up-$1"
 }
 
+function python-path-base() {
+  local python_path
+
+  python_path="$(which python)"
+
+  echo "warning: Not implemented Bash alias of Python for the current platform, falling back to system default path:" 1>&2
+  echo "${python_path}" 1>&2
+  echo 1>&2
+
+  echo "${python_path}"
+}
+
+function python-path() {
+  python-path-base
+}
+
 function venv-init() {
-  python -m venv .venv
+  "$(python-path)" -m venv .venv
 
   # shellcheck source=/dev/null
   source ".venv/bin/activate"
@@ -423,7 +439,7 @@ function venv-init() {
 }
 
 function venv-create() {
-  python -m venv .venv
+  "$(python-path)" -m venv .venv
 }
 
 function venv-activate() {

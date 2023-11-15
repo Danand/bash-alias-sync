@@ -3,3 +3,27 @@
 function openvpn-conf-dir() {
   echo "/opt/homebrew/etc/openvpn"
 }
+
+function python-path-fzf() {
+  find \
+    -L \
+    /opt/homebrew/opt \
+    -type f \
+    -name "python" \
+  | fzf \
+    --tac \
+    --header="Pick Python path:" \
+    --layout="reverse" \
+    --no-sort \
+    --height="33%"
+}
+
+function python-path() {
+  if fzf --version > /dev/null 2>&1; then
+    python-path-fzf
+  else
+    echo "FZF is not installed, falling back to base resolver of Python path" 1>&2
+    echo 1>&2
+    python-path-base
+  fi
+}
