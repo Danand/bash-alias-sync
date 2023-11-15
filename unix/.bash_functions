@@ -735,6 +735,19 @@ function gh-runs-rm-fzf() {
   done
 }
 
+function gh-clone() {
+  local repo
+
+  repo="$(\
+    gh repo list \
+      --json "nameWithOwner" \
+      --jq '.[] | .nameWithOwner' \
+    | fzf \
+  )"
+
+  gh repo clone "${repo}"
+}
+
 function docker-hub-token-bearer-obtain() {
   if [ -z "${DOCKERHUB_USERNAME}" ]; then
     DOCKERHUB_USERNAME="$(cat | cut -d "@" -f 1)"
@@ -1255,4 +1268,114 @@ function path-edit-fzf() {
 function ipinfo() {
   curl "https://ipinfo.io/?token=${IPINFO_TOKEN}"
   echo
+}
+
+function rg-fzf() {
+  local results
+  results="$(rg "$1" --files-without-match)"
+
+  echo "${results}" \
+  | sort --uniq \
+  | fzf
+}
+
+function find-fzf() {
+  local results
+  results="$(find "$@")"
+
+  echo "${results}" \
+  | sort --uniq \
+  | fzf
+}
+
+function code-new() {
+  touch "$1"
+  code "$1" --reuse-window
+}
+
+function openvpn-conf-dir() {
+  echo "/etc/openvpn"
+}
+
+function openvpn-profile-fzf() {
+  rm -f "$(openvpn-conf-dir)/client.conf"
+
+  # shellcheck disable=SC2012
+  find "$(openvpn-conf-dir)" \
+    -name "*.ovpn" \
+    -or -name "*.conf" \
+  | fzf \
+  | cp "$(cat)" "$(openvpn-conf-dir)/client.conf"
+}
+
+function openvpn-connect() {
+  sudo killall openvpn 2>/dev/null
+
+  sudo nohup openvpn "$(openvpn-conf-dir)/client.conf" > /dev/null 2>&1 &
+
+  sleep 5
+
+  echo "Connected"
+  echo
+
+  echo "Current IP info:"
+
+  # Obtain token at https://ipinfo.io/
+  curl "https://ipinfo.io/?token=${IPINFO_TOKEN}"
+  echo
+}
+
+function openvpn-disconnect() {
+  sudo killall openvpn > /dev/null 2>&1
+
+  sleep 5
+
+  echo "Disconnected"
+  echo
+
+  echo "Current IP info:"
+
+  # Obtain token at https://ipinfo.io/
+  curl "https://ipinfo.io/?token=${IPINFO_TOKEN}"
+  echo
+}
+
+function doctl-ssh-fzf() {
+  doctl compute ssh "$( \
+    doctl compute droplet list \
+      --format="ID,Name,PublicIPv4,Region,Image" \
+      --no-header \
+    | fzf \
+    | tr -s " " \
+    | cut -d " " -f 1 \
+  )"
+}
+
+function doctl-update-hosts() {
+  local droplet_ips
+
+  droplet_ips="$( \
+    doctl compute droplet list \
+      --format="PublicIPv4,Name" \
+      --no-header \
+    | tr -s " " \
+  )"
+
+  local clear_from
+  clear_from="$(sudo grep -n "DigitalOcean.*begin" /etc/hosts | cut -d ":" -f 1)"
+
+  local clear_to
+  clear_to="$(sudo grep -n "DigitalOcean.*end" /etc/hosts | cut -d ":" -f 1)"
+
+  if [ -n "${clear_from}" ] && [ -n "${clear_to}" ]; then
+    sudo sed -i "${clear_from},${clear_to}d" /etc/hosts
+  fi
+
+  sudo "${SHELL}" -c "echo \"# ===== DigitalOcean Droplets (begin) =====\" >> /etc/hosts"
+
+  for droplet_ip in ${droplet_ips}; do
+    sudo "${SHELL}" -c "echo \"${droplet_ip}\" >> /etc/hosts"
+  done
+
+  sudo "${SHELL}" -c "echo \"# ===== DigitalOcean Droplets (end) =====\" >> /etc/hosts"
 }
