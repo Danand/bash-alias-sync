@@ -247,9 +247,27 @@ function touch-p() {
 
 function concat() {
   cat
-  
+
   while [ ! $# -eq 0 ]; do
     echo "$1"
     shift
   done
+}
+
+function gh-merge-fork-branch() {
+  local fork_branch="$1"
+
+  local remote
+  remote="$(echo "${fork_branch}" | cut -d ":" -f 1)"
+
+  local branch
+  branch="$(echo "${fork_branch}" | cut -d ":" -f 2)"
+
+  local repo_name
+  repo_name="$(git remote get-url origin | cut -d "/" -f 2)"
+
+  git remote add "${remote}" "git@github.com:${remote}/${repo_name}" 2>/dev/null || true
+  git fetch "${remote}" "${branch}"
+
+  git merge --no-ff "${remote}/${branch}"
 }
