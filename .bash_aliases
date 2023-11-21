@@ -108,6 +108,7 @@ export __SECRETS_EXCLUDE
 function __check_tokens() {
   rg \
     --hidden \
+    --glob '!.git' \
     --only-matching \
     --replace '$1' \
     --no-messages \
@@ -122,11 +123,11 @@ function __check_tokens() {
         && ! echo "${__SECRETS_EXCLUDE[*]}" | __contains "${varname}" \
         && ! echo "${varname}" | grep -q '^[0-9]*$'
       then
-        echo -e 1>&2
         echo -e "${COLOR_YELLOW}warning: Variable is not set for the current session:${COLOR_CLEAR} \`${COLOR_CYAN}${varname}${COLOR_CLEAR}\`" 1>&2
         echo -e 1>&2
         echo -e "You can add it to \`${COLOR_CYAN}~/.bash_secrets${COLOR_CLEAR}\`:" 1>&2
         echo -e "  echo 'export ${varname}=\"YOUR-VALUE-HERE\"' >> ~/.bash_secrets" 1>&2
+        echo -e 1>&2
       fi
     done
 }

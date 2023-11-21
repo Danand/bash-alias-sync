@@ -2,7 +2,7 @@
 
 function rg-fzf() {
   local results
-   results="$(rg "$1" --files-without-match)"
+  results="$(rg "$1" --files-without-match)"
 
   echo "${results}" | sort --uniq | fzf
 }
