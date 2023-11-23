@@ -365,6 +365,18 @@ function git-log-file-fzf() {
     --preview="__git_show_preview_file {}"
 }
 
+function git-branch-rm-fzf() {
+  local branches
+
+  branches="$(git branch --format="%(refname:short)")"
+
+  echo "${branches}" \
+  | fzf --multi \
+  | while read -r branch; do
+      git branch -D "${branch}"
+    done
+}
+
 function docker-compose-logs() {
   docker-compose \
     "$@" \
