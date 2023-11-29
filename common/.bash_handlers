@@ -24,19 +24,30 @@ HISTSIZE=9000
 HISTFILESIZE=$HISTSIZE
 HISTCONTROL=ignorespace:ignoredups
 
+function history() {
+  __bash_history_sync
+  builtin history "$@"
+}
+
 function __bash_history_sync() {
   builtin history -a
   HISTFILESIZE=$HISTSIZE
   builtin history -c
   builtin history -r
+
+  echo -n -e "\033]0;$(basename "$(pwd)")\007"
 }
 
-history() {
+function __change_tab_name() {
+  echo -n -e "\033]0;$(basename "$(pwd)")\007"
+}
+
+function __prompt_command() {
   __bash_history_sync
-  builtin history "$@"
+  __change_tab_name
 }
 
-PROMPT_COMMAND=__bash_history_sync
+PROMPT_COMMAND=__prompt_command
 
 # Set up custom completions:
 
