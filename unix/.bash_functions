@@ -571,6 +571,22 @@ function adb-sensor-ls() {
   | sort --uniq
 }
 
+function adb-colorize() {
+  local app="$1"
+
+  while read -r line; do
+    if echo "${line}" | grep -q " I ${app}"; then
+      echo -e "${COLOR_GREEN}${line}${COLOR_CLEAR}"
+    elif echo "${line}" | grep -q " W ${app}"; then
+      echo -e "${COLOR_YELLOW}${line}${COLOR_CLEAR}"
+    elif echo "${line}" | grep -q " E ${app}"; then
+      echo -e "${COLOR_RED}${line}${COLOR_CLEAR}"
+    else
+      echo -e "${COLOR_DIM}${line}${COLOR_CLEAR}"
+    fi
+  done
+}
+
 function android-sdkmanager-fzf() {
   local managers
 
