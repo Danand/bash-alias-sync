@@ -37,7 +37,8 @@ function __bash_history_sync() {
 }
 
 function __change_tab_name() {
-  echo -n -e "\033]0;$(basename "$(pwd)")\007"
+  echo -ne "\033]0;$(basename "$(pwd)")\007"
+  PS1="$PS1\[\e]0;$(basename "$(pwd)")\a\]"
 }
 
 function __prompt_command() {
