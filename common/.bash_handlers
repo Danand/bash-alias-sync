@@ -34,8 +34,6 @@ function __bash_history_sync() {
   HISTFILESIZE=$HISTSIZE
   builtin history -c
   builtin history -r
-
-  echo -n -e "\033]0;$(basename "$(pwd)")\007"
 }
 
 function __change_tab_name() {
