@@ -464,6 +464,7 @@ function venv-deactivate() {
 }
 
 function venv-reset() {
+  deactivate || true
   rm -rf .venv
 }
 
