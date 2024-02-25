@@ -1424,3 +1424,7 @@ function doctl-update-hosts() {
 
   sudo "${SHELL}" -c "echo \"# ===== DigitalOcean Droplets (end) =====\" >> /etc/hosts"
 }
+
+function curl-ping() {
+  curl -o /dev/null -sL -w '%{time_connect}s\n' "$1"
+}
