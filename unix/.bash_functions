@@ -588,6 +588,10 @@ function adb-colorize() {
   done
 }
 
+function adb-undebug() {
+  adb shell am clear-debug-app
+}
+
 function android-sdkmanager-fzf() {
   local managers
 
