@@ -1432,3 +1432,33 @@ function doctl-update-hosts() {
 function curl-ping() {
   curl -o /dev/null -sL -w '%{time_connect}s\n' "$1"
 }
+
+function ssh-fzf() {
+  local host
+
+  host="$( \
+    cat ~/.ssh/config \
+    | grep -o "^Host .*$" \
+    | cut \
+      -d " " \
+      -f 2 \
+    | fzf \
+      --tac \
+      --header="Pick SSH host:" \
+      --layout="reverse" \
+      --no-sort \
+      --height="33%" \
+  )"
+
+  if [ -z "${host}" ]; then
+    return 0
+  fi
+
+  read \
+    -er \
+    -i "ssh root@${host}" \
+    -p "${PS1@P}" \
+    input
+
+  eval "${input}"
+}
