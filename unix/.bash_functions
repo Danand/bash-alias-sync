@@ -487,6 +487,16 @@ function pip-uninstall-fzf() {
   | pip uninstall "$(cat)" -y
 }
 
+function calc() {
+  local command
+
+  command='result = '
+  command+="$@"
+  command+='; print(result)'
+
+  python3 -c "${command}"
+}
+
 function uniq-unsorted() {
   local index=0
 
