@@ -377,6 +377,26 @@ function git-branch-rm-fzf() {
     done
 }
 
+function git-ssh-command-fzf() {
+  key_private_path="$( \
+    find ~/.ssh \
+      -type f \
+      -not -name "*.pub" \
+      -and -not -name "config" \
+      -and -not -name "authorized_keys" \
+      -and -not -name "known_hosts*" \
+    | while read -r path; do basename "${path}"; done \
+    | fzf \
+      --tac \
+      --header="Pick SSH key" \
+      --layout="reverse" \
+      --no-sort \
+      --height="33%" \
+  )"
+
+  export GIT_SSH_COMMAND="ssh -i ~/.ssh/${key_private_path}"
+}
+
 function docker-compose-logs() {
   docker-compose \
     "$@" \
