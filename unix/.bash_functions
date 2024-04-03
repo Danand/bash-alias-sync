@@ -378,6 +378,8 @@ function git-branch-rm-fzf() {
 }
 
 function git-ssh-command-fzf() {
+  local key_private_path
+
   key_private_path="$( \
     find ~/.ssh \
       -type f \
