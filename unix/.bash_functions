@@ -1494,3 +1494,22 @@ function ssh-fzf() {
 
   eval "${input}"
 }
+
+function unity-upm-add-local() {
+  local package_path
+
+  package_path="$( \
+    find ~ \
+      -name "package.json" \
+      -maxdepth 2 \
+    2>/dev/null \
+    | fzf \
+      --tac \
+      --header="Pick UPM package:" \
+      --layout="reverse" \
+      --no-sort \
+      --height="33%" \
+  )"
+
+  "${BASH_ALIAS_SYNC_REPO}/python-scripts/unity-upm-add-local.py" "${package_path}"
+}
