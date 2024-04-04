@@ -1513,3 +1513,47 @@ function unity-upm-add-local() {
 
   "${BASH_ALIAS_SYNC_REPO}/python-scripts/unity-upm-add-local.py" "${package_path}"
 }
+
+function mv-ln() {
+  local source_path="$1"
+  local target_path="$2"
+
+  local source_path_real
+  source_path_real="$(realpath "${source_path}")"
+
+  local target_path_dirname_real
+  local target_path_basename
+
+  if [ -d "${target_path}" ]; then
+    target_path_dirname_real="$(realpath "${target_path}")"
+    target_path_basename="$(basename "${source_path}")"
+  else
+    target_path_dirname_real="$(realpath "$(dirname "${target_path}")")"
+    target_path_basename="$(basename "${target_path}")"
+  fi
+
+  local target_path_real
+  target_path_real="${target_path_dirname_real}/${target_path_basename}"
+
+  mv "${source_path_real}" "${target_path_real}"
+  ln -s "${target_path_real}" "${source_path_real}"
+
+  echo "'${target_path_real}' -> '${source_path_real}'" 1>&2
+}
+
+function ln-unlink() {
+  local target_path="$1"
+
+  if [ ! -L "${target_path}" ]; then
+    echo "error: The provided path is not a symlink" 1>&2
+    return 1
+  fi
+
+  local destination_path
+  destination_path="$(readlink -- "${target_path}")"
+
+  unlink -- "${target_path}"
+  mv "${destination_path}" "${target_path}"
+
+  echo "Unlinked and moved '${target_path}' from '${destination_path}'" 1>&2
+}
