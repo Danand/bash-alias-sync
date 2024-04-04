@@ -1538,7 +1538,7 @@ function mv-ln() {
   mv "${source_path_real}" "${target_path_real}"
   ln -s "${target_path_real}" "${source_path_real}"
 
-  echo "'${target_path_real}' -> '${source_path_real}'" 1>&2
+  echo "'${source_path_real}' -> '${target_path_real}'" 1>&2
 }
 
 function ln-unlink() {
