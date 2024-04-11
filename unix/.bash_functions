@@ -399,6 +399,19 @@ function git-ssh-command-fzf() {
   export GIT_SSH_COMMAND="ssh -i ~/.ssh/${key_private_path}"
 }
 
+function git-diff-name-fzf() {
+  local diff_names
+  diff_names="$(git diff --cached --name-only)"
+
+  echo "${diff_names}" \
+  | fzf \
+    --tac \
+    --header="Choose changed file name" \
+    --layout="reverse" \
+    --no-sort \
+    --height="25%"
+}
+
 function docker-compose-logs() {
   docker-compose \
     "$@" \
