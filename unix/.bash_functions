@@ -1152,6 +1152,9 @@ function docker-container-fzf() {
     docker ps "$@" \
     | tail -n +2 \
     | fzf \
+      --multi \
+      --preview='__docker_list_ancestors {}' \
+      --bind="ctrl-a:select-all" \
     | cut \
       -d " " \
       -f 1 \
