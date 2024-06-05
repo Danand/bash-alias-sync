@@ -57,6 +57,15 @@ git config --global alias.push-exact '!push() { \
     "${current_branch}"; \
 }; push'
 
+git config --global alias.push-with-tags '!push() { \
+  current_branch="$(git branch --show-current)" && \
+  git push origin "${current_branch}" && \
+  git push origin --tags && \
+  git branch \
+    --set-upstream-to="origin/${current_branch}" \
+    "${current_branch}"; \
+}; push'
+
 git config --global alias.fetch-all '!fetch() { \
   git remote prune origin && \
   git fetch && \
