@@ -96,6 +96,42 @@ function git-branch-push-copy() {
   git push origin "${branch}:${branch}"
 }
 
+function git-patch-merge() {
+  local rev="$1"
+
+  git diff \
+    "${rev}^1" \
+    "${rev}" \
+    --full-index \
+    --binary
+}
+
+function git-branch-head() {
+  local rev="$1"
+
+  git rev-parse "${rev}^2"
+}
+
+function git-branch-head-merge() {
+  local rev="$1"
+  local branch_other="$2"
+
+  local branch_current
+  branch_current="$(git branch --show-current)"
+
+  local branch_other_head
+  branch_other_head="$(git-branch-head "${rev}")"
+
+  if [ -z "${branch_other}" ]; then
+    branch_other="${branch_other_head}"
+  fi
+
+  git merge \
+    --no-ff \
+    --message "Merge branch '${branch_other}' into '${branch_current}'" \
+    "${branch_other_head}"
+}
+
 function measure() {
   time "${@}"
   echo 1>&2
