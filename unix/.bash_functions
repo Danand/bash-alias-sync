@@ -1437,6 +1437,10 @@ function openvpn-disconnect() {
   echo
 }
 
+function openvpn-reconnect() {
+  openvpn-disconnect && openvpn-connect
+}
+
 function doctl-ssh-fzf() {
   doctl compute ssh "$( \
     doctl compute droplet list \
