@@ -1408,37 +1408,80 @@ function openvpn-profile-fzf() {
 function openvpn-connect() {
   sudo killall openvpn 2>/dev/null
 
+  echo -e "${COLOR_BLUE}Attempt to connect...${COLOR_CLEAR}"
+  echo
+
   sudo nohup openvpn "$(openvpn-conf-dir)/client.conf" > /dev/null 2>&1 &
 
-  sleep 5
+  sleep 4
 
-  echo "Connected"
+  echo "Retreiving current IP info..."
   echo
 
-  echo "Current IP info:"
+  echo -en "${COLOR_GREEN}"
 
   # Obtain token at https://ipinfo.io/
-  curl "https://ipinfo.io/?token=${IPINFO_TOKEN}"
+  curl "https://ipinfo.io/?token=${IPINFO_TOKEN}" \
+    --max-time 3 \
+    --fail
+
+  exit_code=$?
+
+  echo -en "${COLOR_CLEAR}"
+
   echo
+
+  if [ $exit_code -eq 1 ]; then
+    echo -e "${COLOR_GREEN}Connected${COLOR_CLEAR}"
+  else
+    echo -e "${COLOR_RED}Failed to connect${COLOR_CLEAR}" 1>&2
+  fi
+
+  echo
+
+  return $exit_code
 }
 
 function openvpn-disconnect() {
   sudo killall openvpn > /dev/null 2>&1
 
-  sleep 5
+  sleep 4
 
-  echo "Disconnected"
+  echo -e "${COLOR_YELLOW}Disconnected${COLOR_CLEAR}"
   echo
 
-  echo "Current IP info:"
+  echo "Retreiving current IP info..."
+  echo
+
+  echo -en "${COLOR_YELLOW}"
 
   # Obtain token at https://ipinfo.io/
-  curl "https://ipinfo.io/?token=${IPINFO_TOKEN}"
+  curl "https://ipinfo.io/?token=${IPINFO_TOKEN}" \
+    --max-time 3 \
+    --fail
+
+  exit_code=$?
+
+  echo -en "${COLOR_CLEAR}"
+
   echo
+  echo
+
+  return $exit_code
 }
 
 function openvpn-reconnect() {
-  openvpn-disconnect && openvpn-connect
+  echo "Reconnecting..."
+  echo
+
+  exit_code=1
+
+  while [ $exit_code -ne 0 ]; do
+    openvpn-disconnect
+    openvpn-connect
+
+    exit_code=$?
+  done
 }
 
 function doctl-ssh-fzf() {
