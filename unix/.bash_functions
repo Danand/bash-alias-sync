@@ -1362,6 +1362,19 @@ function path-edit-fzf() {
   echo
 }
 
+function path-append() {
+  local dir="$1"
+
+  local target_file="${BASH_PATH_FILE}"
+
+  if [ -d "$1" ]; then
+    PATH="${PATH}:${dir}"
+    echo "PATH=\"${PATH}\"" > "${target_file}"
+  else
+    echo "Directory \"${dir}\" does not exist" 1>&2
+  fi
+}
+
 function ipinfo() {
   curl "https://ipinfo.io/?token=${IPINFO_TOKEN}"
   echo
