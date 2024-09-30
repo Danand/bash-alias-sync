@@ -412,6 +412,79 @@ function git-diff-name-fzf() {
     --height="25%"
 }
 
+function __git_diff_file_head() {
+  local path
+  path=$(echo "$1" | cut -d $'\t' -f 3)
+
+  if [ -z "${path}" ]; then
+    echo "No file selected"
+    return
+  fi
+
+  git diff \
+    --color \
+    -- "${path}"
+}
+
+export -f __git_diff_file_head
+
+function git-status-formatted() {
+  git status --porcelain \
+  | while IFS='' read -r line; do
+      local status="${line:0:2}"
+      local path="${line:3}"
+
+      case "${status}" in
+        "A ") echo -e "${COLOR_GREEN}STAGED${COLOR_CLEAR}\t${COLOR_GREEN}ADDED${COLOR_CLEAR}\t${path}" ;;
+        "D ") echo -e "${COLOR_GREEN}STAGED${COLOR_CLEAR}\t${COLOR_RED}REMOVED${COLOR_CLEAR}\t${path}" ;;
+        "M ") echo -e "${COLOR_GREEN}STAGED${COLOR_CLEAR}\t${COLOR_YELLOW}MODIFIED${COLOR_CLEAR}\t${path}" ;;
+        " M") echo -e "${COLOR_YELLOW}UNSTAGED${COLOR_CLEAR}\t${COLOR_YELLOW}MODIFIED${COLOR_CLEAR}\t${path}" ;;
+        " D") echo -e "${COLOR_YELLOW}UNSTAGED${COLOR_CLEAR}\t${COLOR_RED}REMOVED${COLOR_CLEAR}\t${path}" ;;
+        " R") echo -e "${COLOR_YELLOW}UNSTAGED${COLOR_CLEAR}\t${COLOR_BLUE}MOVED${COLOR_CLEAR}\t${path}" ;;
+        "??") echo -e "${COLOR_YELLOW}UNTRACKED${COLOR_CLEAR}\t${COLOR_GREEN}ADDED${COLOR_CLEAR}\t${path}" ;;
+        "MM") echo -e "${COLOR_GREEN}PARTLY${COLOR_CLEAR}${COLOR_YELLOW}${COLOR_CLEAR}\t${COLOR_YELLOW}MODIFIED${COLOR_CLEAR}\t${path}" ;;
+        *) ;;
+      esac
+  done \
+  | sort
+}
+
+function git-stage-fzf-rich() {
+  local command="$1"
+
+  if [ -z "${command}" ]; then
+    command="add"
+  fi
+
+  if [ "${command}" == "remove" ]; then
+    command="restore --staged"
+  fi
+
+  local status
+  status="$(git-status-formatted)"
+
+  echo "${status}" \
+  | fzf \
+    -i \
+    --multi \
+    --no-sort \
+    --tac \
+    --ansi \
+    --header="git ${command}" \
+    --layout="reverse" \
+    --preview-window="hidden" \
+    --preview="__git_diff_file_head {}" \
+    --bind="ctrl-d:toggle-preview" \
+    --bind="ctrl-a:select-all" \
+  | cut -d $'\t' -f 3 \
+  | while read -r path; do
+      echo "git ${command} ${path}"
+
+      # shellcheck disable=SC2086
+      git $command $path
+    done
+}
+
 function docker-compose-logs() {
   docker-compose \
     "$@" \
