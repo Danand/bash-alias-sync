@@ -757,6 +757,7 @@ function android-sdkmanager-fzf() {
 function ip-local() {
   ip -4 addr show \
   | awk '/inet / {print $2}' \
+  | grep -v '127\.0\.0\.1' \
   | cut -d '/' -f1
 }
 
@@ -1449,8 +1450,37 @@ function path-append() {
 }
 
 function ipinfo() {
-  curl "https://ipinfo.io/?token=${IPINFO_TOKEN}"
+  local ip="$1"
+
+  local address=""
+
+  if [ -n "${ip}" ]; then
+    address="${ip}/"
+  fi
+
+  local query=""
+
+  if [ -n "${IPINFO_TOKEN}" ]; then
+    query="?token=${IPINFO_TOKEN}"
+  fi
+
+  curl "https://ipinfo.io/${address}json${query}"
   echo
+}
+
+function resolve() {
+  local domain="$1"
+  dig +short "${domain}" \
+  | grep -E '^[0-9\.]+$|^([0-9a-fA-F:]+:+)+[0-9a-fA-F]+$'
+}
+
+function ipinfo-resolve() {
+  local domain="$1"
+
+  resolve "${domain}" \
+  | while read -r ip; do
+      ipinfo "${ip}";
+    done
 }
 
 function rg-fzf() {
