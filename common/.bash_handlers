@@ -64,5 +64,6 @@ function __complete_ssh() {
 }
 
 __complete_ssh ssh
+__complete_ssh ssh-copy-id
 __complete_ssh scp
 __complete_ssh git-patch-scp

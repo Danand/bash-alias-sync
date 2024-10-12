@@ -1736,3 +1736,9 @@ function ln-unlink() {
 
   echo "Unlinked and moved '${target_path}' from '${destination_path}'" 1>&2
 }
+
+function curl-format-download() {
+  local url="$1"
+
+  echo "curl -O \"${url}\""
+}
