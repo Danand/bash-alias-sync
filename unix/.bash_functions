@@ -1794,19 +1794,27 @@ function ssh-fzf-nmap-local() {
 }
 
 function ssh-id-set() {
-  pushd ~/.ssh
+  pushd ~/.ssh > /dev/null
 
-  find . -type f \
-  | while read -r file; do
-      if grep -iq "private" "${file}"; then
-        echo "${file}"
-      fi
-    done \
-  | fzf \
-      --tac \
-      --header="Pick SSH key which will be \`id_rsa\`:" \
-      --layout="reverse" \
-      --no-sort \
-      --height="33%" \
-  | mv -f "$(cat)" "id_rsa"
+  local private_key_path
+
+  private_key_path="$( \
+    find . -type f \
+    | while read -r file; do
+        if grep -iq "private" "${file}"; then
+          echo "${file}"
+        fi
+      done \
+    | fzf \
+        --tac \
+        --header="Pick SSH key which will be \`id_rsa\`:" \
+        --layout="reverse" \
+        --no-sort \
+        --height="33%" \
+  )"
+
+  cp -f "${private_key_path}" "./id_rsa"
+  cp -f "${private_key_path}.pub" "./id_rsa.pub"
+
+  popd > /dev/null
 }
