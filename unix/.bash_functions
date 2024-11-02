@@ -1792,3 +1792,21 @@ function ssh-fzf-nmap-local() {
 
   eval "${input}"
 }
+
+function ssh-id-set() {
+  pushd ~/.ssh
+
+  find . -type f \
+  | while read -r file; do
+      if grep -iq "private" "${file}"; then
+        echo "${file}"
+      fi
+    done \
+  | fzf \
+      --tac \
+      --header="Pick SSH key which will be \`id_rsa\`:" \
+      --layout="reverse" \
+      --no-sort \
+      --height="33%" \
+  | mv -f "$(cat)" "id_rsa"
+}
