@@ -755,10 +755,10 @@ function android-sdkmanager-fzf() {
 }
 
 function ip-local() {
-  ip -4 addr show \
+  ifconfig \
   | awk '/inet / {print $2}' \
   | grep -v '127\.0\.0\.1' \
-  | cut -d '/' -f1
+  | cut -d '/' -f 1
 }
 
 function __kill_preview() {
@@ -1645,6 +1645,12 @@ function curl-ping() {
 }
 
 function ssh-fzf() {
+  local user="$1"
+
+  if [ -z "${user}" ]; then
+    user="root"
+  fi
+
   local host
 
   host="$( \
@@ -1667,7 +1673,7 @@ function ssh-fzf() {
 
   read \
     -er \
-    -i "ssh root@${host}" \
+    -i "ssh ${user}@${host}" \
     -p "${PS1@P}" \
     input
 
@@ -1741,4 +1747,48 @@ function curl-format-download() {
   local url="$1"
 
   echo "curl -O \"${url}\""
+}
+
+function nmap-local-ls() {
+  local ip_mask="$1"
+
+  if [ -z "${ip_mask}" ]; then
+    ip_mask="$(ip-local)/24"
+  fi
+
+  nmap -sn "${ip_mask}" -oG - \
+  | grep "Status: Up" \
+  | cut -d ' ' -f 2
+}
+
+function ssh-fzf-nmap-local() {
+  local user="$1"
+
+  if [ -z "${user}" ]; then
+    user="root"
+  fi
+
+  local host
+
+  host="$( \
+    nmap-local-ls \
+    | fzf \
+      --tac \
+      --header="Pick SSH host:" \
+      --layout="reverse" \
+      --no-sort \
+      --height="33%" \
+  )"
+
+  if [ -z "${host}" ]; then
+    return 0
+  fi
+
+  read \
+    -er \
+    -i "ssh ${user}@${host}" \
+    -p "${PS1@P}" \
+    input
+
+  eval "${input}"
 }
