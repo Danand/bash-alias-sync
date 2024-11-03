@@ -1818,3 +1818,8 @@ function ssh-id-set() {
 
   popd > /dev/null
 }
+
+function ps-port() {
+  local port="$1"
+  sudo lsof -i :$port
+}
