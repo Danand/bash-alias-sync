@@ -1645,12 +1645,6 @@ function curl-ping() {
 }
 
 function ssh-fzf() {
-  local user="$1"
-
-  if [ -z "${user}" ]; then
-    user="root"
-  fi
-
   local host
 
   host="$( \
@@ -1673,7 +1667,7 @@ function ssh-fzf() {
 
   read \
     -er \
-    -i "ssh ${user}@${host}" \
+    -i "ssh ${host}" \
     -p "${PS1@P}" \
     input
 
@@ -1762,12 +1756,6 @@ function nmap-local-ls() {
 }
 
 function ssh-fzf-nmap-local() {
-  local user="$1"
-
-  if [ -z "${user}" ]; then
-    user="root"
-  fi
-
   local host
 
   host="$( \
@@ -1786,7 +1774,7 @@ function ssh-fzf-nmap-local() {
 
   read \
     -er \
-    -i "ssh ${user}@${host}" \
+    -i "ssh ${host}" \
     -p "${PS1@P}" \
     input
 
