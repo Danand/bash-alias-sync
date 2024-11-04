@@ -9,3 +9,7 @@ function npm-local-path() {
 
   echo "${volume_label}:/${remaining_path}"
 }
+
+function inet-ip-ls() {
+  ipconfig | awk '/IPv4 Address/ {print $14}'
+}

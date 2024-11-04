@@ -754,9 +754,12 @@ function android-sdkmanager-fzf() {
   echo "y" | "${manager}" --licenses
 }
 
+function inet-ip-ls() {
+  ifconfig | awk '/inet / {print $2}'
+}
+
 function ip-local() {
-  ifconfig \
-  | awk '/inet / {print $2}' \
+  inet-ip-ls \
   | grep -v '127\.0\.0\.1' \
   | cut -d '/' -f 1
 }
@@ -1310,7 +1313,7 @@ function rmdir-fzf() {
 
 function cd-fzf() {
   local dir
-  
+
   dir="$( \
     find . -maxdepth 1 -type d \
     | concat ".." \
@@ -1648,8 +1651,7 @@ function ssh-fzf() {
   local host
 
   host="$( \
-    cat ~/.ssh/config \
-    | grep -o "^Host .*$" \
+    grep -o "^Host .*$" ~/.ssh/config \
     | cut \
       -d " " \
       -f 2 \
@@ -1743,16 +1745,26 @@ function curl-format-download() {
   echo "curl -O \"${url}\""
 }
 
+# shellcheck disable=SC2120
 function nmap-local-ls() {
-  local ip_mask="$1"
+  local ip_masks="$1"
 
   if [ -z "${ip_mask}" ]; then
-    ip_mask="$(ip-local)/24"
+    ip_masks="$( \
+      ip-local \
+      | while read -r ip; do
+          echo "${ip}/24"
+        done \
+    )"
   fi
 
-  nmap -sn "${ip_mask}" -oG - \
-  | grep "Status: Up" \
-  | cut -d ' ' -f 2
+  echo "${ip_masks}" \
+  | while read -r ip_mask; do
+      echo "${ip_mask}" \
+      | nmap -sn "${ip_mask}" -oG - \
+      | grep "Status: Up" \
+      | cut -d ' ' -f 2
+    done
 }
 
 function ssh-fzf-nmap-local() {
@@ -1782,7 +1794,7 @@ function ssh-fzf-nmap-local() {
 }
 
 function ssh-id-set() {
-  pushd ~/.ssh > /dev/null
+  pushd ~/.ssh > /dev/null || return 2
 
   local private_key_path
 
@@ -1804,7 +1816,7 @@ function ssh-id-set() {
   cp -f "${private_key_path}" "./id_rsa"
   cp -f "${private_key_path}.pub" "./id_rsa.pub"
 
-  popd > /dev/null
+  popd > /dev/null || return 2
 }
 
 function ps-port() {
