@@ -132,6 +132,48 @@ function git-branch-head-merge() {
     "${branch_other_head}"
 }
 
+function git-branch-mv() {
+  local branch_other="$1"
+
+  if [ -n "${branch_other}" ]; then
+    read \
+      -er \
+      -i "${branch_other}" \
+      -p "${PS1@P}" \
+      branch_name_new
+
+    git branch -m "${branch_other}" "${branch_name_new}"
+  else
+    read \
+      -er \
+      -i "$(git branch --show-current)" \
+      -p "${PS1@P}" \
+      branch_name_new
+
+    git branch -M "${branch_name_new}"
+  fi
+}
+
+function git-branch-mv-fzf() {
+  local branches
+
+  branches="$(git branch --format="%(refname:short)")"
+
+  if [ -z "${branches}" ]; then
+    return 0
+  fi
+
+  local selected_branch
+
+  selected_branch="$(echo "${branches}" | fzf)"
+
+  if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
+    return 0
+  fi
+
+  git-branch-mv "${selected_branch}"
+}
+
 function measure() {
   time "${@}"
   echo 1>&2
