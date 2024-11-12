@@ -52,14 +52,32 @@ function git-cd-submodule-fzf() {
 
 function git-merge-fzf() {
   local branches
-
   branches="$(git branch -r --format="%(refname:short)")"
 
   if [ -z "${branches}" ]; then
     return 0
   fi
 
-  slocal elected_branch="$(echo "${branches}" | fzf)"
+  local selected_branch
+  selected_branch="$(echo "${branches}" | fzf)"
+
+  if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
+    return 0
+  fi
+
+  git merge --no-ff "${selected_branch}"
+}
+
+function git-merge-remote-fzf() {
+  local branches
+  branches="$(git branch --remote --format="%(refname:short)" | cut -d "/" -f 2-)"
+
+  if [ -z "${branches}" ]; then
+    return 0
+  fi
+
+  local selected_branch
+  selected_branch="$(echo "${branches}" | fzf)"
 
   if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
     return 0
@@ -107,7 +125,6 @@ function git-rebase-from-rev-fzf() {
 
 function git-checkout-fzf() {
   local branches
-
   branches="$(git branch --format="%(refname:short)")"
 
   if [ -z "${branches}" ]; then
@@ -115,7 +132,6 @@ function git-checkout-fzf() {
   fi
 
   local selected_branch
-
   selected_branch="$(echo "${branches}" | fzf)"
 
   if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
@@ -132,7 +148,6 @@ function git-checkout-remote-fzf() {
   git fetch-all
 
   local branches
-
   branches="$(git branch --remote --format="%(refname:short)" | cut -d "/" -f 2-)"
 
   if [ -z "${branches}" ]; then
@@ -140,7 +155,6 @@ function git-checkout-remote-fzf() {
   fi
 
   local selected_branch
-
   selected_branch="$(echo "${branches}" | fzf)"
 
   if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
