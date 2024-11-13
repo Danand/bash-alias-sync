@@ -349,3 +349,10 @@ function gh-merge-fork-branch() {
 
   git merge --no-ff "${remote}/${branch}"
 }
+
+function mkdir-cd() {
+  local dir="$1"
+
+  mkdir -p "${dir}"
+  cd "${dir}"
+}
