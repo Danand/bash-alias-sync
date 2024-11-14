@@ -403,11 +403,11 @@ function git-ssh-command-fzf() {
       -and -not -name "known_hosts*" \
     | while read -r path; do basename "${path}"; done \
     | fzf \
-      --tac \
-      --header="Pick SSH key" \
-      --layout="reverse" \
-      --no-sort \
-      --height="33%" \
+        --tac \
+        --header="Pick SSH key" \
+        --layout="reverse" \
+        --no-sort \
+        --height="33%" \
   )"
 
   export GIT_SSH_COMMAND="ssh -i ~/.ssh/${key_private_path}"
