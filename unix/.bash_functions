@@ -1807,7 +1807,7 @@ function ssh-fzf-nmap-local() {
   eval "${input}"
 }
 
-function ssh-id-set() {
+function ssh-id-fzf() {
   pushd ~/.ssh > /dev/null || return 2
 
   local private_key_path
