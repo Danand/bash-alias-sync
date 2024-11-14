@@ -7,12 +7,26 @@ function __try_install_via_apt() {
     || true
   }
 
-if [ "$(detect-package-manager)" == "apt" ]; then
+function __try_install_via_apk() {
+    apk add --update "$1"
+}
+
+_package_manager="$(detect-package-manager)"
+
+if [ "${_package_manager}" == "apt" ]; then
   __try_install_via_apt "net-tools"
   __try_install_via_apt "xclip"
   __try_install_via_apt "ripgrep"
   __try_install_via_apt "fzf"
   __try_install_via_apt "jq"
-fi
 
-unset -f __try_install_via_apt
+  unset -f __try_install_via_apt
+elif [ "${_package_manager}" == "apk" ]; then
+  __try_install_via_apk "net-tools"
+  __try_install_via_apk "xclip"
+  __try_install_via_apk "ripgrep"
+  __try_install_via_apk "fzf"
+  __try_install_via_apk "jq"
+
+  unset -f __try_install_via_apk
+fi
