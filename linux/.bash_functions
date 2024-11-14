@@ -107,3 +107,29 @@ function apport-unpack-fzf() {
   rm -rf "${unpack_dir}"
   rm -f "${gdb_commands}"
 }
+
+function __kill_preview() {
+  ps_line="$1"
+  pstree -p "$(echo "${ps_line}" | awk '{print $1}')"
+}
+
+export -f __kill_preview
+
+function kill-fzf() {
+  ps -aex --format $'%p\t%a' \
+  | tail -n +2 \
+  | grep \
+      -v \
+      -e "ps -aex" \
+      -e "tail" \
+      -e "grep" \
+  | column -t \
+  | fzf \
+      --tac \
+      --header="Choose process to kill:" \
+      --layout="reverse" \
+      --no-sort \
+      --preview="__kill_preview {}" \
+      --preview-window 'right:33%' \
+  | kill -9 "$(cat | awk '{print $1}')"
+}
