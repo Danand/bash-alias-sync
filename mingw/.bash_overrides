@@ -17,5 +17,7 @@ function npm-local-path() {
 }
 
 function inet-ip-ls() {
-  ipconfig | awk '/IPv4 Address/ {print $14}'
+  ipconfig \
+  | grep "IPv4 Address" \
+  | cut -d ' ' -f 14
 }

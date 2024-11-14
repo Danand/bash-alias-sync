@@ -769,7 +769,9 @@ function android-sdkmanager-fzf() {
 }
 
 function inet-ip-ls() {
-  ifconfig | awk '/inet / {print $2}'
+  ifconfig \
+  | grep "inet " \
+  | cut -d ' ' -f 2
 }
 
 function ip-local() {
