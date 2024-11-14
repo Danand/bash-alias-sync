@@ -791,18 +791,18 @@ function kill-fzf() {
   ps -aex --format $'%p\t%a' \
   | tail -n +2 \
   | grep \
-    -v \
-    -e "ps -aex" \
-    -e "tail" \
-    -e "grep" \
+      -v \
+      -e "ps -aex" \
+      -e "tail" \
+      -e "grep" \
   | column -t \
   | fzf \
-    --tac \
-    --header="Choose process to kill:" \
-    --layout="reverse" \
-    --no-sort \
-    --preview="__kill_preview {}" \
-    --preview-window 'right:33%' \
+      --tac \
+      --header="Choose process to kill:" \
+      --layout="reverse" \
+      --no-sort \
+      --preview="__kill_preview {}" \
+      --preview-window 'right:33%' \
   | kill -9 "$(cat | awk '{print $1}')"
 }
 
