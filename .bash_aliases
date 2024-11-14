@@ -156,6 +156,8 @@ else
   touch "${BASH_SECRETS_FILE}"
 fi
 
+chmod +x "${BASH_ALIAS_SYNC_REPO}/python-scripts/"*.py
+
 # shellcheck source=/dev/null
 source "${BASH_ALIAS_SYNC_REPO}/.bash_functions"
 
