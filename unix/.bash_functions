@@ -69,6 +69,8 @@ function git-merge-fzf() {
 }
 
 function git-merge-remote-fzf() {
+  git fetch-all
+
   local branches
   branches="$(git branch --remote --format="%(refname:short)" | cut -d "/" -f 2-)"
 
@@ -83,7 +85,7 @@ function git-merge-remote-fzf() {
     return 0
   fi
 
-  git merge --no-ff "${selected_branch}"
+  git merge --no-ff "origin/${selected_branch}"
 }
 
 function git-rebase-current-branch-fzf() {
