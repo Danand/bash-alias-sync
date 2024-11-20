@@ -174,6 +174,14 @@ function git-branch-mv-fzf() {
   git-branch-mv "${selected_branch}"
 }
 
+function git-prune() {
+  git config gc.auto 0
+  git fetch --prune
+  git prune
+  git repack -a -d
+  git gc
+}
+
 function measure() {
   time "${@}"
   echo 1>&2
