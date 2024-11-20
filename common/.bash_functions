@@ -154,26 +154,6 @@ function git-branch-mv() {
   fi
 }
 
-function git-branch-mv-fzf() {
-  local branches
-
-  branches="$(git branch --format="%(refname:short)")"
-
-  if [ -z "${branches}" ]; then
-    return 0
-  fi
-
-  local selected_branch
-
-  selected_branch="$(echo "${branches}" | fzf)"
-
-  if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
-    return 0
-  fi
-
-  git-branch-mv "${selected_branch}"
-}
-
 function git-prune() {
   git config gc.auto 0
   git fetch --prune

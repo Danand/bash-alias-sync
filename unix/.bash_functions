@@ -501,6 +501,26 @@ function git-stage-fzf-rich() {
     done
 }
 
+function git-branch-mv-fzf() {
+  local branches
+
+  branches="$(git branch --format="%(refname:short)")"
+
+  if [ -z "${branches}" ]; then
+    return 0
+  fi
+
+  local selected_branch
+
+  selected_branch="$(echo "${branches}" | fzf)"
+
+  if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
+    return 0
+  fi
+
+  git-branch-mv "${selected_branch}"
+}
+
 function docker-compose-logs() {
   docker-compose \
     "$@" \
