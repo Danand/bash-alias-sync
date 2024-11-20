@@ -162,6 +162,40 @@ function git-prune() {
   git gc
 }
 
+function git-count-objects() {
+  git count-objects -vH 2>/dev/null \
+  | grep "^count:" \
+  | cut -d ' ' -f 2
+}
+
+function git-fetch-iterative() {
+  if ! git rev-parse --git-dir > /dev/null 2>&1; then
+    echo "error: Current directory is not a git repository." 1>&2
+    exit 1
+  fi
+
+  local object_count_initial=$(git-count-objects)
+
+  echo "Initial object count: ${object_count_initial}"
+
+  local object_count_previous=$object_count_initial
+
+  while true; do
+    git fetch --deepen=1
+
+    local object_count_new=$(git-count-objects)
+
+    if [ $object_count_new -eq $object_count_previous ]; then
+      break
+    else
+      echo "New object count: ${object_count_new}"
+      object_count_previous=$object_count_new
+    fi
+  done
+
+  echo "Iterative fetch completed"
+}
+
 function measure() {
   time "${@}"
   echo 1>&2
