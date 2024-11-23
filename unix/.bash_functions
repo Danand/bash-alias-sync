@@ -521,6 +521,67 @@ function git-branch-mv-fzf() {
   git-branch-mv "${selected_branch}"
 }
 
+function git-rewrite-author-fzf() {
+  local authors
+
+  authors="$( \
+    git log --format='%aN <%aE>' \
+    | sort \
+    | uniq \
+  )"
+
+  local author_chosen
+
+  author_chosen="$( \
+    echo "${authors}" \
+    | fzf \
+      --tac \
+      --header="Choose author to rename" \
+      --layout="reverse" \
+      --no-sort \
+  )"
+
+  if [ -z "${author_chosen}" ]; then
+    echo "No author selected."
+    return 1
+  fi
+
+  local author_new
+
+  read \
+    -er \
+    -i "${author_chosen}" \
+    -p "${PS1@P}" \
+    author_new
+
+  local name_new
+  name_new=$(echo "${author_new}" | sed 's/ <.*//')
+
+  local email_new
+  email_new=$(echo "${author_new}" | sed 's/.*<\(.*\)>/\1/')
+
+  git filter-branch \
+    --force \
+    --env-filter " \
+      if [ \"\${GIT_COMMITTER_EMAIL}\" = \"${email_new}\" ]; then
+        export GIT_COMMITTER_NAME=\"${name_new}\"
+      fi
+
+      if [ \"\${GIT_AUTHOR_EMAIL}\" = \"${email_new}\" ]; then
+        export GIT_AUTHOR_NAME=\"${name_new}\"
+      fi
+    " \
+    --tag-name-filter "cat" \
+    -- \
+    --branches \
+    --tags
+
+  echo
+  echo "Author \"${author_chosen}\" renamed to \"${author_new}\""
+  echo
+  echo "Don't forget to \`git push --force\` if you want changes to persist on remote repository"
+}
+
 function docker-compose-logs() {
   docker-compose \
     "$@" \
