@@ -68,8 +68,8 @@ git config --global alias.push-with-tags '!push() { \
 
 git config --global alias.fetch-all '!fetch() { \
   git remote prune origin && \
-  git fetch && \
-  git submodule foreach git fetch && \
+  git fetch --all && \
+  git submodule foreach git fetch --all && \
   git fetch --prune && \
   git submodule foreach git fetch --prune; \
 }; fetch'
