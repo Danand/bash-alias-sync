@@ -101,6 +101,8 @@ __SECRETS_EXCLUDE=( \
   "NF" \
   "SHA1" \
   "SOB" \
+  "GIT_AUTHOR_EMAIL" \
+  "GIT_COMMITTER_EMAIL" \
 )
 
 export __SECRETS_EXCLUDE
