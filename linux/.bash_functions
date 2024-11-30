@@ -133,3 +133,82 @@ function kill-fzf() {
       --preview-window 'right:33%' \
   | kill -9 "$(cat | awk '{print $1}')"
 }
+
+function __systemd_status_preview() {
+  local services="$1"
+
+  export SYSTEMD_COLORS=1
+
+  echo -n "${services}" \
+  | tr ' ' '\n' \
+  | while read -r service; do
+      systemctl status "${service}"
+      echo
+    done
+}
+
+export -f __systemd_status_preview
+
+function systemd-fzf() {
+    local preview_window="right:67%"
+
+    local services
+
+    services="$( \
+      systemctl list-unit-files \
+        --type=service \
+        --no-pager \
+        --all \
+        --plain \
+        --no-legend \
+      | cut -d ' ' -f 1 \
+      | grep -v "@" \
+      | uniq \
+      | fzf \
+        -i \
+        --header="Choose services:" \
+        --layout="reverse" \
+        --no-sort \
+        --multi \
+        --ansi \
+        --preview="__systemd_status_preview {}" \
+        --preview-window="${preview_window}" \
+    )"
+
+    if [ -z "${services}" ]; then
+      return 0
+    fi
+
+    local services_args
+    services_args="$(echo ${services} | tr '\n' ' ')"
+
+    local command
+
+    command="$( \
+      ( \
+        echo "restart"
+        echo "stop"
+        echo "disable"
+        echo "enable"
+      ) \
+      | fzf \
+        -i \
+        --header="Choose command:" \
+        --layout="reverse" \
+        --no-sort \
+        --ansi \
+        --preview="__systemd_status_preview \"${services_args}\"" \
+        --preview-window="${preview_window}" \
+    )"
+
+    if [ -z "${command}" ]; then
+      return 0
+    fi
+
+    echo "${services}" \
+    | while read -r service; do
+        sudo systemctl "${command}" "${service}"
+        systemctl status "${service}"
+        echo
+      done
+}
