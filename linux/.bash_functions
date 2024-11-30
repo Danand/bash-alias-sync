@@ -139,11 +139,13 @@ function __systemd_status_preview() {
 
   export SYSTEMD_COLORS=1
 
-  echo -n "${services}" \
-  | tr ' ' '\n' \
+  echo "${services}" \
+  | tr ' ' '\n'
   | while read -r service; do
-      systemctl status "${service}"
-      echo
+      if [ -n "${service}" ]; then
+        systemctl status "${service}"
+        echo
+      fi
     done
 }
 
