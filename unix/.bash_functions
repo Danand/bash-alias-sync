@@ -603,6 +603,11 @@ function git-rewrite-author-fzf() {
   echo "Don't forget to \`git push --force\` if you want changes to persist on remote repository"
 }
 
+function git-diff-grep() {
+  local pattern="$1"
+  git-log-oneline -G "${pattern}"
+}
+
 function docker-compose-logs() {
   docker-compose \
     "$@" \
