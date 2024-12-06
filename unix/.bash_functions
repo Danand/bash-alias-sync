@@ -880,7 +880,7 @@ function android-sdkmanager-fzf() {
 function inet-ip-ls() {
   ifconfig \
   | grep "inet " \
-  | cut -d ' ' -f 2
+  | awk '{ print $2; }'
 }
 
 function ip-local() {
