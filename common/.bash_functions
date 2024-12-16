@@ -174,26 +174,22 @@ function git-fetch-iterative() {
     exit 1
   fi
 
-  local object_count_initial=$(git-count-objects)
+  export GIT_HTTP_LOW_SPEED_LIMIT=0
+  export GIT_HTTP_LOW_SPEED_TIME=999999
 
-  echo "Initial object count: ${object_count_initial}"
-
-  local object_count_previous=$object_count_initial
+  local branch="$(git branch --show-current)"
 
   while true; do
-    git fetch --deepen=1
+    git fetch \
+      --deepen=1 \
+      origin \
+      "${branch}"
 
-    local object_count_new=$(git-count-objects)
+    local commit_count="$(git rev-list --count "${branch}")"
 
-    if [ $object_count_new -eq $object_count_previous ]; then
-      break
-    else
-      echo "New object count: ${object_count_new}"
-      object_count_previous=$object_count_new
-    fi
+    echo "Commit count on branch \`${branch}\`: ${commit_count}"
+    echo "Press CTRL+C when you considered fetch deepen is enough..."
   done
-
-  echo "Iterative fetch completed"
 }
 
 function measure() {
