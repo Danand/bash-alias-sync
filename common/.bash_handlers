@@ -38,7 +38,7 @@ function __bash_history_sync() {
 
 function __change_tab_name() {
   echo -ne "\033]0;$(basename "$(pwd)")\007"
-  PS1="$PS1\[\e]0;$(basename "$(pwd)")\a\]"
+  prompt-apply-mingw-like
 }
 
 function __prompt_command() {
