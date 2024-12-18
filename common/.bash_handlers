@@ -66,7 +66,14 @@ if ! declare -F "__git_ps1" > /dev/null; then
 fi
 
 function __change_prompt() {
-  PS1="\n${COLOR_BOLD}${COLOR_GREEN}$(whoami)${COLOR_CLEAR}"
+  PS1=""
+
+  # HACK: Handle Python Virtual Environment:
+  if [ -n "${VIRTUAL_ENV}" ]; then
+    PS1+="\n($(basename ${VIRTUAL_ENV}))"
+  fi
+
+  PS1+="\n${COLOR_BOLD}${COLOR_GREEN}$(whoami)${COLOR_CLEAR}"
   PS1+="@${COLOR_BLUE}$(uname -n)${COLOR_CLEAR}"
   PS1+=":$(pwd)${COLOR_CYAN}$(__git_ps1)${COLOR_CLEAR}"
   PS1+="\n\$ "
