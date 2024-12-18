@@ -24,11 +24,6 @@ HISTSIZE=9000
 HISTFILESIZE=$HISTSIZE
 HISTCONTROL=ignorespace:ignoredups
 
-function history() {
-  __bash_history_sync
-  builtin history "$@"
-}
-
 function __bash_history_sync() {
   builtin history -a
   HISTFILESIZE=$HISTSIZE
@@ -36,14 +31,53 @@ function __bash_history_sync() {
   builtin history -r
 }
 
+function history() {
+  __bash_history_sync
+  builtin history "$@"
+}
+
+# Set up prompt:
+
 function __change_tab_name() {
   echo -ne "\033]0;$(basename "$(pwd)")\007"
-  prompt-apply-mingw-like
+}
+
+if ! declare -F "__git_ps1" > /dev/null; then
+  function __git_ps1() {
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+      return 0
+    fi
+
+    local revision_current=""
+
+    local branch_current
+    branch_current="$(git branch --show-current)"
+
+    if [ -z "${branch_current}" ]; then
+      revision_current="$(git rev-parse --short HEAD)"
+    else
+      revision_current="${branch_current}"
+    fi
+
+    echo " (${revision_current})"
+  }
+
+  export -f __git_ps1
+fi
+
+function __change_prompt() {
+  PS1="\n${COLOR_BOLD}${COLOR_GREEN}$(whoami)${COLOR_CLEAR}"
+  PS1+="@${COLOR_BLUE}$(uname -n)${COLOR_CLEAR}"
+  PS1+=":$(pwd)${COLOR_CYAN}$(__git_ps1)${COLOR_CLEAR}"
+  PS1+="\n\$ "
+
+  export PS1
 }
 
 function __prompt_command() {
   __bash_history_sync
   __change_tab_name
+  __change_prompt
 }
 
 PROMPT_COMMAND=__prompt_command

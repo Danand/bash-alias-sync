@@ -267,41 +267,6 @@ function remember() {
   fi
 }
 
-if ! declare -F "__git_ps1" > /dev/null; then
-  function __git_ps1() {
-    if ! git rev-parse --git-dir > /dev/null 2>&1; then
-      return 0
-    fi
-
-    local revision_current=""
-
-    local branch_current
-    branch_current="$(git branch --show-current)"
-
-    if [ -z "${branch_current}" ]; then
-      revision_current="$(git rev-parse --short HEAD)"
-    else
-      revision_current="${branch_current}"
-    fi
-
-    echo " (${revision_current})"
-  }
-
-  export -f __git_ps1
-fi
-
-function prompt-apply-mingw-like-without-git() {
-  PS1='\n\[\033[1m\]\[\033[32m\]`whoami`\[\033[0m\]@\[\033[34m\]`uname -n`\[\033[0m\]:`pwd`\[\033[36m\]\[\033[0m\]\[\033[0m\]\n$ '
-}
-
-function prompt-apply-mingw-like() {
-  PS1='\n\[\033[1m\]\[\033[32m\]`whoami`\[\033[0m\]@\[\033[34m\]`uname -n`\[\033[0m\]:`pwd`\[\033[36m\]`__git_ps1`\[\033[0m\]\[\033[0m\]\n$ '
-}
-
-function prompt-apply-with-date() {
-  PS1='\n\[\033[1m\]\[\033[32m\]`whoami`\[\033[0m\]@\[\033[34m\]`uname -n`\[\033[0m\]:`pwd` \[\033[0;34m\]`date +"%Y-%m-%d %H-%M-%S"`\[\033[0m\] \$ '
-}
-
 function grep-errors() {
   cat | grep \
     -ie "warn" \

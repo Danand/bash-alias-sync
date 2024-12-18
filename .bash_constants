@@ -12,6 +12,7 @@ export COLOR_CYAN='\033[0;36m'
 export COLOR_WHITE='\033[0;37m'
 export COLOR_DIM="\033[2m"
 export COLOR_CLEAR='\033[0m'
+export COLOR_BOLD='\[\033[1m\]'
 
 UPDATE_MARKER_FILE="/tmp/bash-alias-sync-scheduled-update"
 export UPDATE_MARKER_FILE
