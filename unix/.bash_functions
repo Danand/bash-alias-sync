@@ -157,7 +157,12 @@ function git-checkout-fzf() {
   fi
 
   local selected_branch
-  selected_branch="$(echo "${branches}" | fzf)"
+
+  selected_branch="$( \
+    echo "${branches}" \
+    | fzf \
+        --header="Choose local branch:" \
+  )"
 
   if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
     return 0
@@ -180,7 +185,12 @@ function git-checkout-remote-fzf() {
   fi
 
   local selected_branch
-  selected_branch="$(echo "${branches}" | fzf)"
+
+  selected_branch="$( \
+    echo "${branches}" \
+    | fzf \
+        --header="Choose remote branch:" \
+  )"
 
   if [ "$?" == "130" ] || [ -z "${selected_branch}" ]; then
     return 0
@@ -427,7 +437,7 @@ function git-ssh-command-fzf() {
     | while read -r path; do basename "${path}"; done \
     | fzf \
         --tac \
-        --header="Pick SSH key" \
+        --header="Pick SSH key:" \
         --layout="reverse" \
         --no-sort \
         --height="33%" \
@@ -443,7 +453,7 @@ function git-diff-name-fzf() {
   echo "${diff_names}" \
   | fzf \
     --tac \
-    --header="Choose changed file name" \
+    --header="Choose changed file name:" \
     --layout="reverse" \
     --no-sort \
     --height="25%"
@@ -515,10 +525,10 @@ function git-stage-fzf-rich() {
     --bind="ctrl-a:select-all" \
   | cut -d $'\t' -f 3 \
   | while read -r path; do
-      echo "git ${command} ${path}"
+      local expression="git ${command} ${path}"
 
-      # shellcheck disable=SC2086
-      git $command $path
+      echo "${expression}"
+      eval "${expression}"
     done
 }
 
@@ -557,7 +567,7 @@ function git-rewrite-author-fzf() {
     echo "${authors}" \
     | fzf \
       --tac \
-      --header="Choose author to rename" \
+      --header="Choose author to rename:" \
       --layout="reverse" \
       --no-sort \
   )"
