@@ -1316,19 +1316,31 @@ function docker-prune() {
 }
 
 function docker-stop-all() {
-  docker stop "$(docker ps -q)"
+  docker ps -q \
+  | while read -r container_id; do
+       docker stop "${container_id}"
+    done
 }
 
 function docker-kill-all() {
-  docker kill "$(docker ps -q)"
+  docker ps -q \
+  | while read -r container_id; do
+       docker kill "${container_id}"
+    done
 }
 
 function docker-rm-all() {
-  docker rm "$(docker ps -a -q)"
+  docker ps -a -q \
+  | while read -r container_id; do
+      docker rm -f "${container_id}"
+    done
 }
 
 function docker-rmi-all() {
-  docker rmi -f "$(docker images -aq)"
+  docker images -aq \
+  | while read -r container_id; do
+      docker rmi -f "${container_id}"
+    done
 }
 
 function docker-container-fzf() {
